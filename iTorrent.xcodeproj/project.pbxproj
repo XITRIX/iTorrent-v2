@@ -38,6 +38,13 @@
 		7CAD301E2BC347D900592990 /* Published+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAD301D2BC347D900592990 /* Published+Codable.swift */; };
 		7CAD30202BC34BCE00592990 /* RssFeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAD301F2BC34BCE00592990 /* RssFeedProvider.swift */; };
 		7CB6F6CE2BD82BAB00D0813B /* FileSharingPreferencesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6F6CD2BD82BAB00D0813B /* FileSharingPreferencesViewModel.swift */; };
+		7CB6F6D12BDAD0DB00D0813B /* FBAudienceNetwork.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CB6F6CF2BDAD0A800D0813B /* FBAudienceNetwork.xcframework */; platformFilter = ios; };
+		7CB6F6D22BDAD0DB00D0813B /* FBAudienceNetwork.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7CB6F6CF2BDAD0A800D0813B /* FBAudienceNetwork.xcframework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7CB6F6D52BDAD51300D0813B /* ADBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6F6D42BDAD51300D0813B /* ADBannerView.swift */; };
+		7CB6F6D72BDAD51A00D0813B /* ADBannerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CB6F6D62BDAD51A00D0813B /* ADBannerView.xib */; };
+		7CB6F6D92BDADEC600D0813B /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6F6D82BDADEC600D0813B /* BaseView.swift */; };
+		7CB6F6DB2BDAE63700D0813B /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CB6F6DA2BDAE63700D0813B /* AppTrackingTransparency.framework */; };
+		7CB6F6DD2BDAE7C100D0813B /* AppDelegate+Meta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6F6DC2BDAE7C100D0813B /* AppDelegate+Meta.swift */; };
 		7CC411582BD2DCF800CA8B13 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7CC411572BD2DCF800CA8B13 /* GoogleService-Info.plist */; };
 		7CC4115B2BD2DE3800CA8B13 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, xros, ); productRef = 7CC4115A2BD2DE3800CA8B13 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		7CC4115D2BD2DE3800CA8B13 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, xros, ); productRef = 7CC4115C2BD2DE3800CA8B13 /* FirebaseCrashlytics */; };
@@ -199,6 +206,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				7CB6F6D22BDAD0DB00D0813B /* FBAudienceNetwork.xcframework in Embed Frameworks */,
 				D1A226F52AEF01B700669D6D /* LibTorrent.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -237,6 +245,12 @@
 		7CAD301D2BC347D900592990 /* Published+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Published+Codable.swift"; sourceTree = "<group>"; };
 		7CAD301F2BC34BCE00592990 /* RssFeedProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RssFeedProvider.swift; sourceTree = "<group>"; };
 		7CB6F6CD2BD82BAB00D0813B /* FileSharingPreferencesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSharingPreferencesViewModel.swift; sourceTree = "<group>"; };
+		7CB6F6CF2BDAD0A800D0813B /* FBAudienceNetwork.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:V9WTTPBFK9:Meta Platforms, Inc."; lastKnownFileType = wrapper.xcframework; name = FBAudienceNetwork.xcframework; path = Submodules/FBAudienceNetwork.xcframework; sourceTree = "<group>"; };
+		7CB6F6D42BDAD51300D0813B /* ADBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADBannerView.swift; sourceTree = "<group>"; };
+		7CB6F6D62BDAD51A00D0813B /* ADBannerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ADBannerView.xib; sourceTree = "<group>"; };
+		7CB6F6D82BDADEC600D0813B /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
+		7CB6F6DA2BDAE63700D0813B /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = DEVELOPER_DIR; };
+		7CB6F6DC2BDAE7C100D0813B /* AppDelegate+Meta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Meta.swift"; sourceTree = "<group>"; };
 		7CC411572BD2DCF800CA8B13 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7CC411612BD319AE00CA8B13 /* AppDelegate+RemoteConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+RemoteConfig.swift"; sourceTree = "<group>"; };
 		7CC411632BD326C300CA8B13 /* AppDelegate+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Firebase.swift"; sourceTree = "<group>"; };
@@ -387,6 +401,8 @@
 				D1A226B82AEEF05400669D6D /* OpenSSL in Frameworks */,
 				D1A226F42AEF01B700669D6D /* LibTorrent.framework in Frameworks */,
 				7C5FBE122BBB63C80069E5A0 /* MarqueeLabel in Frameworks */,
+				7CB6F6DB2BDAE63700D0813B /* AppTrackingTransparency.framework in Frameworks */,
+				7CB6F6D12BDAD0DB00D0813B /* FBAudienceNetwork.xcframework in Frameworks */,
 				7CC411602BD2FE8700CA8B13 /* FirebaseRemoteConfigSwift in Frameworks */,
 				7CF9C2C72AF7F235009BBFA0 /* MvvmFoundation in Frameworks */,
 				D1DB71832BD80318007F9267 /* GCDWebServers in Frameworks */,
@@ -403,9 +419,11 @@
 		7C5FBE0D2BBB206B0069E5A0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7CB6F6D32BDAD4C000D0813B /* ADBannerView */,
 				7C5FBE6E2BC2EF8B0069E5A0 /* EditTextView */,
 				D173D9DD2BC024DD00E4F9EB /* UISwitchWithMenu.swift */,
 				7C5FBE0E2BBB227D0069E5A0 /* UISegmentedProgressView.swift */,
+				7CB6F6D82BDADEC600D0813B /* BaseView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -486,6 +504,15 @@
 				7CB6F6CD2BD82BAB00D0813B /* FileSharingPreferencesViewModel.swift */,
 			);
 			path = FileSharing;
+			sourceTree = "<group>";
+		};
+		7CB6F6D32BDAD4C000D0813B /* ADBannerView */ = {
+			isa = PBXGroup;
+			children = (
+				7CB6F6D42BDAD51300D0813B /* ADBannerView.swift */,
+				7CB6F6D62BDAD51A00D0813B /* ADBannerView.xib */,
+			);
+			path = ADBannerView;
 			sourceTree = "<group>";
 		};
 		7CC411562BD2DCC000CA8B13 /* Assets */ = {
@@ -741,6 +768,7 @@
 				D1352D3E2BBD81C000104E7B /* AppDelegate+Notifications.swift */,
 				7CFEBEAC2BC88F4C0013233F /* AppDelegate+BackgroundRefresh.swift */,
 				7CC411612BD319AE00CA8B13 /* AppDelegate+RemoteConfig.swift */,
+				7CB6F6DC2BDAE7C100D0813B /* AppDelegate+Meta.swift */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -923,6 +951,8 @@
 		D1A226D32AEEF73600669D6D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7CB6F6DA2BDAE63700D0813B /* AppTrackingTransparency.framework */,
+				7CB6F6CF2BDAD0A800D0813B /* FBAudienceNetwork.xcframework */,
 				D1A226F32AEF01B700669D6D /* LibTorrent.framework */,
 				D1A226D42AEEF73600669D6D /* MvvmFoundation.framework */,
 				7C5FBE3C2BC0ADC90069E5A0 /* WidgetKit.framework */,
@@ -1249,6 +1279,7 @@
 			files = (
 				7CFEBE922BC441980013233F /* RssDetailsViewController.xib in Resources */,
 				D1A226AA2AEEEFDF00669D6D /* LaunchScreen.storyboard in Resources */,
+				7CB6F6D72BDAD51A00D0813B /* ADBannerView.xib in Resources */,
 				7CFEBE742BC3ED480013233F /* RssFeedCell.xib in Resources */,
 				D1A226A72AEEEFDF00669D6D /* Assets.xcassets in Resources */,
 				7CFEBE892BC439C30013233F /* RssChannelItemCell.xib in Resources */,
@@ -1321,6 +1352,7 @@
 				D11333B52AF19C4900FA017E /* TorrentHandle+Extension.swift in Sources */,
 				D19E00202AEFFA1B000A17A2 /* DetailCellView.swift in Sources */,
 				D1ACFDC62AF6DB9F0098FF56 /* TorrentFilesFileListCell.swift in Sources */,
+				7CB6F6DD2BDAE7C100D0813B /* AppDelegate+Meta.swift in Sources */,
 				D1A227072AEF0B2C00669D6D /* TorrentListItem.swift in Sources */,
 				D111384B2AF965F1008907F7 /* TorrentAddViewModel.swift in Sources */,
 				D1A226A22AEEEFCC00669D6D /* ViewController.swift in Sources */,
@@ -1374,6 +1406,7 @@
 				D1EFCD122AF572E400D33A7A /* TorrentFilesFileItemViewModel.swift in Sources */,
 				7CAD301C2BC3457900592990 /* RssModel.swift in Sources */,
 				7CFEBE882BC439C30013233F /* RssChannelItemCell.swift in Sources */,
+				7CB6F6D92BDADEC600D0813B /* BaseView.swift in Sources */,
 				7C5FBE312BBF5CAB0069E5A0 /* MinHeightModifier.swift in Sources */,
 				D1EFCD192AF6AEC700D33A7A /* TorrentFilesDictionaryItemViewModel.swift in Sources */,
 				7CFEBE762BC3ED550013233F /* RssFeedCellViewModel.swift in Sources */,
@@ -1401,6 +1434,7 @@
 				D1A227092AEF0B6A00669D6D /* TorrentListItemViewModel.swift in Sources */,
 				7CC411642BD326C300CA8B13 /* AppDelegate+Firebase.swift in Sources */,
 				7CFEBEAB2BC725E10013233F /* UIViewController+BottomSheet.swift in Sources */,
+				7CB6F6D52BDAD51300D0813B /* ADBannerView.swift in Sources */,
 				D11BE5462AFB904600780C1B /* PRSwitchViewModel.swift in Sources */,
 				D1048D9C2BBECFF40027EF2F /* PreferencesSectionGroupingViewModel.swift in Sources */,
 				D1048D852BBE92220027EF2F /* SAViewController.swift in Sources */,

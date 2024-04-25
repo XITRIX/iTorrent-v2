@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         registerPushNotifications(application)
         registerBackgroundRefresh()
         registerRemoteConfig()
+        registerMeta()
         return true
     }
 

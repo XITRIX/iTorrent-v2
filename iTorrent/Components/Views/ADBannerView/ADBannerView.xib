@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ADBannerView" customModule="iTorrent" customModuleProvider="target">
+            <connections>
+                <outlet property="adAdvertiserNameLabel" destination="F13-hb-GyM" id="gdQ-fz-ag8"/>
+                <outlet property="adCallToActionButton" destination="17R-jY-5Xm" id="o1x-mF-2Uw"/>
+                <outlet property="adChoicesView" destination="6Pz-B2-TjA" id="LR3-6D-mET"/>
+                <outlet property="adIconImageView" destination="qle-Oi-9rL" id="5fZ-vd-p07"/>
+                <outlet property="adSponsoredLabel" destination="Lbw-5Z-V6h" id="tc0-GB-0P7"/>
+                <outlet property="adUIView" destination="iN0-l3-epB" id="E1T-fL-Igv"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" userLabel="adUIView">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="68"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zn6-Pd-wFo">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="68"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qle-Oi-9rL" userLabel="adIconImageView" customClass="FBMediaView">
+                            <rect key="frame" x="0.0" y="0.0" width="68" height="68"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Pz-B2-TjA" userLabel="adChoicesView" customClass="FBAdChoicesView">
+                                    <rect key="frame" x="0.0" y="0.0" width="12" height="12"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="12" id="OGD-nD-rxW"/>
+                                        <constraint firstAttribute="width" constant="12" id="ZwX-td-2jr"/>
+                                    </constraints>
+                                </view>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstItem="6Pz-B2-TjA" firstAttribute="top" secondItem="qle-Oi-9rL" secondAttribute="top" id="2SW-29-6HS"/>
+                                <constraint firstAttribute="width" constant="68" id="FTw-d0-p7Z"/>
+                                <constraint firstItem="6Pz-B2-TjA" firstAttribute="leading" secondItem="qle-Oi-9rL" secondAttribute="leading" id="Tx3-mV-CO6"/>
+                                <constraint firstAttribute="height" constant="68" id="p4w-tp-rBH"/>
+                            </constraints>
+                        </view>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="0c6-bs-xkO">
+                            <rect key="frame" x="68" y="11.666666666666668" width="250" height="44.666666666666657"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F13-hb-GyM" userLabel="adAdvertiserNameLabel">
+                                    <rect key="frame" x="0.0" y="0.0" width="250" height="20.333333333333332"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lbw-5Z-V6h" userLabel="adSponsoredLabel">
+                                    <rect key="frame" x="0.0" y="24.333333333333336" width="250" height="20.333333333333336"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                        </stackView>
+                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="17R-jY-5Xm" userLabel="adCallToActionButton">
+                            <rect key="frame" x="318" y="14.000000000000004" width="75" height="40.333333333333343"/>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                        </button>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="zn6-Pd-wFo" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="HIT-Tp-ZqG"/>
+                <constraint firstItem="zn6-Pd-wFo" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="U9f-v3-zsg"/>
+                <constraint firstAttribute="bottom" secondItem="zn6-Pd-wFo" secondAttribute="bottom" id="nP1-Gz-tB0"/>
+                <constraint firstAttribute="trailing" secondItem="zn6-Pd-wFo" secondAttribute="trailing" id="nkc-ri-fdF"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-19.083969465648853" y="278.87323943661971"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
