@@ -27,7 +27,7 @@ extension RssFeedProvider {
     }
 }
 
-class RssFeedProvider {
+class RssFeedProvider: Resolvable {
     @Published var rssModels: [RssModel]
     let updatePublisher = CurrentValueSubject<Void, Never>(())
 

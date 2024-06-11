@@ -26,7 +26,7 @@ class RssChannelViewModel: BaseCollectionViewModelWith<RssModel> {
             Publishers.combineLatest(model.$items, $searchQuery) { models, searchQuery in
                 Self.filter(models: models, by: searchQuery)
             }.sink { [unowned self] models in
-                reload(with: models)
+                Task { await reload(with: models) }
             }
         }
 
@@ -63,7 +63,7 @@ class RssChannelViewModel: BaseCollectionViewModelWith<RssModel> {
         }
         rssFeedProvider.saveState()
         ignoreReloadRequests = false
-        reload(with: model.items)
+        Task { await reload(with: model.items) }
     }
 
     func setSeen(_ seen: Bool, for itemModel: RssItemModel) {
@@ -80,11 +80,11 @@ class RssChannelViewModel: BaseCollectionViewModelWith<RssModel> {
 }
 
 private extension RssChannelViewModel {
-    func reload(with models: [RssItemModel]) {
+    func reload(with models: [RssItemModel]) async {
         guard !ignoreReloadRequests else { return }
 
         // TODO: Need to rewrite this DispatchQueue mess
-        DispatchQueue.global(qos: .userInitiated).async { [self] in
+//        DispatchQueue.global(qos: .userInitiated).async { [self] in
             items = models.map { model in
                 let vm: RssChannelItemCellViewModel
                 if let existing = items.first(where: { $0.model == model }) {
@@ -101,10 +101,10 @@ private extension RssChannelViewModel {
                 return vm
             }.removingDuplicates()
 
-            DispatchQueue.main.async { [self] in
+//            DispatchQueue.main.async { [self] in
                 sections = [.init(id: "rss", style: .plain, items: items)]
-            }
-        }
+//            }
+//        }
     }
 
     func setSeen(_ seen: Bool, for index: Int) {

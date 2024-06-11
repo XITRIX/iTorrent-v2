@@ -9,6 +9,7 @@ import MarqueeLabel
 import MvvmFoundation
 import UIKit
 
+@MainActor
 protocol ToolbarHidingProtocol {
     var isToolbarItemsHidden: Bool { get }
 }

@@ -44,14 +44,14 @@ private extension RssSearchViewModel {
                 Self.filter(models: models, by: searchQuery)
             }
             .sink { [unowned self] values in
-                reload(values)
+                Task { await reload(values) }
             }
         }
     }
 
-    func reload(_ rssItems: [RssItemModel]) {
+    func reload(_ rssItems: [RssItemModel]) async {
         // TODO: Need to rewrite this DispatchQueue mess
-        DispatchQueue.global(qos: .userInitiated).async { [self] in
+//        DispatchQueue.global(qos: .userInitiated).async { [self] in
             items = rssItems
                 .sorted(by: { $0.date ?? .distantPast > $1.date ?? .distantPast })
                 .map { model in
@@ -73,15 +73,15 @@ private extension RssSearchViewModel {
                     return vm
                 }.removingDuplicates()
 
-            DispatchQueue.main.async { [self] in
+//            DispatchQueue.main.async { [self] in
                 sections = [.init(id: "rss", style: .plain, items: items)]
-            }
-        }
+//            }
+//        }
     }
 
     func setSeen(_ seen: Bool, for itemModel: RssItemModel) {
         Task.detached(priority: .userInitiated) { [rssProvider] in
-            outerLoop: for channel in await rssProvider.rssModels {
+            outerLoop: for channel in rssProvider.rssModels {
                 for itemIndex in 0 ..< channel.items.count {
                     guard channel.items[itemIndex] == itemModel else { continue }
                     await MainActor.run {

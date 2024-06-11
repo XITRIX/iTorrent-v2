@@ -57,9 +57,11 @@ class RssFeedCellViewModel: BaseViewModelWith<RssFeedCellViewModel.Config>, Mvvm
 
     func openPreferences() {
 #if !os(visionOS)
-        let vc = RssListPreferencesViewModel(with: model).resolveVC()
-        let nvc = UINavigationController(rootViewController: vc)
-        navigationService?()?.navigate(to: nvc, by: .present(wrapInNavigation: false))
+        Task {
+            let vc = RssListPreferencesViewModel(with: model).resolveVC()
+            let nvc = await UINavigationController(rootViewController: vc)
+            await navigationService?()?.navigate(to: nvc, by: .present(wrapInNavigation: false))
+        }
 #else
         navigate(to: RssListPreferencesViewModel.self, with: model, by: .custom(transaction: { [weak self] from, to in
             self?.popoverPreferenceNavigationTransaction.send((from, to))

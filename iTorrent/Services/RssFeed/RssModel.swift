@@ -11,7 +11,7 @@ import Foundation
 import MvvmFoundation
 import SWXMLHash
 
-class RssModel: Hashable, Codable {
+class RssModel: Hashable, Codable, @unchecked Sendable {
     enum Error: Swift.Error {
         case missingKey
         case corruptedData
@@ -75,9 +75,7 @@ class RssModel: Hashable, Codable {
                 $items)
             { _, _, _, _ in () }
                 .sink { _ in
-                    Task {
-                        await (Mvvm.shared.container.resolve(type: RssFeedProvider.self)).saveState()
-                    }
+                    RssFeedProvider.resolve().saveState()
                 }
         }
     }

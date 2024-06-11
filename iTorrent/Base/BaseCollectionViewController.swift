@@ -34,7 +34,7 @@ class BaseCollectionViewController<VM: BaseCollectionViewModel>: BaseViewControl
         }, for: .valueChanged)
 
         disposeBag.bind {
-            viewModel.$sections.sink { [unowned self] sections in
+            viewModel.$sections.uiSink { [unowned self] sections in
                 collectionView.sections.send(sections)
             }
 

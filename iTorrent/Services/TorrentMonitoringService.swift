@@ -8,29 +8,38 @@
 import MvvmFoundation
 import UIKit
 import UserNotifications
+import Combine
 
-class TorrentMonitoringService {
+//extension Publisher where Self.Failure == Never, Self.Output : Sendable {
+//    public func sink(@SendablereceiveValue: @escaping @Sendable ((Self.Output) async throws -> Void)) -> AnyCancellable {
+//        self.sink { value in
+//            Task { try await receiveValue(value) }
+//        }
+//    }
+//}
+
+class TorrentMonitoringService: @unchecked Sendable {
     private let disposeBag = DisposeBag()
     @Injected private var torrentService: TorrentService
 
     init() {
         disposeBag.bind {
             torrentService.updateNotifier.sink { [unowned self] updateModel in
-                checkDoneNotification(with: updateModel)
+                Task { try await checkDoneNotification(with: updateModel) }
             }
         }
     }
 }
 
 private extension TorrentMonitoringService {
-    func checkDoneNotification(with model: TorrentService.TorrentUpdateModel) {
-        guard PreferencesStorage.shared.isDownloadNotificationsEnabled,
+    func checkDoneNotification(with model: TorrentService.TorrentUpdateModel) async throws {
+        guard await PreferencesStorage.shared.isDownloadNotificationsEnabled,
               model.oldSnapshot.state != .checkingFiles,
               model.oldSnapshot.progressWanted < 1,
               model.handle.snapshot.progressWanted >= 1
         else { return }
 
-        if PreferencesStorage.shared.stopSeedingOnFinish {
+        if await PreferencesStorage.shared.stopSeedingOnFinish {
             model.handle.pause()
         }
 
@@ -46,7 +55,7 @@ private extension TorrentMonitoringService {
         let identifier = hash
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
-        UNUserNotificationCenter.current().add(request)
+        try await UNUserNotificationCenter.current().add(request)
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber += 1
         }

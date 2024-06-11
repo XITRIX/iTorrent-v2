@@ -11,7 +11,7 @@ import LibTorrent
 import MvvmFoundation
 import UIKit
 
-class PreferencesStorage: Resolvable {
+class PreferencesStorage: Resolvable, @unchecked Sendable {
     private init() {}
     private var disposeBag: [AnyCancellable] = []
 

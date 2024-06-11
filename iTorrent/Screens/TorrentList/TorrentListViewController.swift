@@ -125,7 +125,7 @@ class TorrentListViewController<VM: TorrentListViewModel>: BaseViewController<VM
             }
 
             if #available(iOS 17.0, *) {
-                viewModel.emptyContentType.sink { [unowned self] emptyType in
+                viewModel.emptyContentType.uiSink { [unowned self] emptyType in
                     switch emptyType {
                     case .noData:
                         var config = UIContentUnavailableConfiguration.empty()

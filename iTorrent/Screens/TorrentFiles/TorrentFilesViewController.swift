@@ -130,12 +130,10 @@ private extension TorrentFilesViewController {
     }
 
     class PreviewDeletates: DelegateObject<TorrentFilesViewController>, QLPreviewControllerDataSource {
-        @MainActor
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
             parent.viewModel.filesForPreview.count
         }
 
-        @MainActor
         func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
             let path = parent.viewModel.filesForPreview[index].path
             return TorrentService.downloadPath.appending(path: path) as NSURL

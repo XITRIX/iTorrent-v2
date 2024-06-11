@@ -10,13 +10,13 @@ import LibTorrent
 import MvvmFoundation
 
 extension TorrentService {
-    struct TorrentUpdateModel {
+    struct TorrentUpdateModel: Sendable {
         let oldSnapshot: TorrentHandle.Snapshot
         let handle: TorrentHandle
     }
 }
 
-class TorrentService {
+class TorrentService: @unchecked Sendable {
     @Published var torrents: [TorrentHandle] = []
     var updateNotifier = PassthroughSubject<TorrentUpdateModel, Never>()
 
