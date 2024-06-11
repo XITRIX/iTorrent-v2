@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Foundation
 
 public extension Publishers {
     // 5
@@ -16,7 +17,7 @@ public extension Publishers {
         _ publisher4: D,
         _ publisher5: E,
         _ transform: @escaping (A.Output, B.Output, C.Output, D.Output, E.Output) -> Result
-    ) -> Publishers.Map<Publishers.CombineLatest4<A, B, C, Publishers.CombineLatest<D, E>>, Result>
+    ) -> AnyPublisher<Result, A.Failure>
     where A.Failure == B.Failure,
           B.Failure == C.Failure,
           C.Failure == D.Failure,
@@ -26,8 +27,9 @@ public extension Publishers {
             .map { a, b, c, d in
                 transform(a, b, c, d.0, d.1)
             }
+            .eraseToAnyPublisher()
     }
-
+    
     // 6
     static func combineLatest<A: Publisher, B: Publisher, C: Publisher, D: Publisher, E: Publisher, F: Publisher, Result>(
         _ publisher1: A,
@@ -37,7 +39,7 @@ public extension Publishers {
         _ publisher5: E,
         _ publisher6: F,
         _ transform: @escaping (A.Output, B.Output, C.Output, D.Output, E.Output, F.Output) -> Result
-    ) -> Publishers.Map<Publishers.CombineLatest4<A, B, C, Publishers.CombineLatest3<D, E, F>>, Result>
+    ) -> AnyPublisher<Result, A.Failure>
     where A.Failure == B.Failure,
           B.Failure == C.Failure,
           C.Failure == D.Failure,
@@ -48,8 +50,9 @@ public extension Publishers {
             .map { a, b, c, d in
                 transform(a, b, c, d.0, d.1, d.2)
             }
+            .eraseToAnyPublisher()
     }
-
+    
     // 7
     static func combineLatest<A: Publisher, B: Publisher, C: Publisher, D: Publisher, E: Publisher, F: Publisher, G: Publisher, Result>(
         _ publisher1: A,
@@ -59,8 +62,9 @@ public extension Publishers {
         _ publisher5: E,
         _ publisher6: F,
         _ publisher7: G,
+        on dispatchQueue: DispatchQueue? = nil,
         _ transform: @escaping (A.Output, B.Output, C.Output, D.Output, E.Output, F.Output, G.Output) -> Result
-    ) -> Publishers.Map<Publishers.CombineLatest4<A, B, C, Publishers.CombineLatest4<D, E, F, G>>, Result>
+    ) -> AnyPublisher<Result, A.Failure>
     where A.Failure == B.Failure,
           B.Failure == C.Failure,
           C.Failure == D.Failure,
@@ -68,10 +72,17 @@ public extension Publishers {
           E.Failure == F.Failure,
           F.Failure == G.Failure
     {
-        return Publishers.CombineLatest4(publisher1, publisher2, publisher3, Publishers.CombineLatest4(publisher4, publisher5, publisher6, publisher7))
-            .map { a, b, c, d in
-                transform(a, b, c, d.0, d.1, d.2, d.3)
-            }
+        var publisher = Publishers.CombineLatest4(publisher1, publisher2, publisher3, Publishers.CombineLatest4(publisher4, publisher5, publisher6, publisher7))
+            .eraseToAnyPublisher()
+
+        if let dispatchQueue {
+            publisher = publisher.receive(on: dispatchQueue)
+                .eraseToAnyPublisher()
+        }
+
+        return publisher.map { a, b, c, d in
+            transform(a, b, c, d.0, d.1, d.2, d.3)
+        }.eraseToAnyPublisher()
     }
 }
 
@@ -81,13 +92,14 @@ public extension Publishers {
         _ publisher1: A,
         _ publisher2: B,
         _ transform: @escaping (A.Output, B.Output) -> Result
-    ) -> Publishers.Map<Publishers.CombineLatest<A, B>, Result>
+    ) -> AnyPublisher<Result, A.Failure>
     where A.Failure == B.Failure
     {
         return Publishers.CombineLatest(publisher1, publisher2)
             .map { a, b in
                 transform(a, b)
             }
+            .eraseToAnyPublisher()
     }
 
     // 3
@@ -96,7 +108,7 @@ public extension Publishers {
         _ publisher2: B,
         _ publisher3: C,
         _ transform: @escaping (A.Output, B.Output, C.Output) -> Result
-    ) -> Publishers.Map<Publishers.CombineLatest3<A, B, C>, Result>
+    ) -> AnyPublisher<Result, A.Failure>
     where A.Failure == B.Failure,
           B.Failure == C.Failure
     {
@@ -104,6 +116,7 @@ public extension Publishers {
             .map { a, b, c in
                 transform(a, b, c)
             }
+            .eraseToAnyPublisher()
     }
 
     // 4
@@ -113,7 +126,7 @@ public extension Publishers {
         _ publisher3: C,
         _ publisher4: D,
         _ transform: @escaping (A.Output, B.Output, C.Output, D.Output) -> Result
-    ) -> Publishers.Map<Publishers.CombineLatest4<A, B, C, D>, Result>
+    ) -> AnyPublisher<Result, A.Failure>
     where A.Failure == B.Failure,
           B.Failure == C.Failure,
           C.Failure == D.Failure
@@ -122,6 +135,7 @@ public extension Publishers {
             .map { a, b, c, d in
                 transform(a, b, c, d)
             }
+            .eraseToAnyPublisher()
     }
 }
 

@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-extension Scheduler where Self == DispatchQueue {
+public extension Scheduler where Self == DispatchQueue {
     static var main: DispatchQueue {
         DispatchQueue.main
     }

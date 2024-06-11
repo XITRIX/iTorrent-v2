@@ -13,7 +13,7 @@ class RssSearchViewController<VM: RssSearchViewModel>: BaseCollectionViewControl
         view.backgroundColor = .systemBackground
 
         disposeBag.bind {
-            viewModel.emptyContentType.sink { [unowned self] emptyType in
+            viewModel.emptyContentType.uiSink { [unowned self] emptyType in
                 if #available(iOS 17.0, *) {
                     switch emptyType {
                     case .noData:

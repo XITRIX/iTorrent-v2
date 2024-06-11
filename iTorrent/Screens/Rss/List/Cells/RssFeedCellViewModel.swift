@@ -58,7 +58,7 @@ class RssFeedCellViewModel: BaseViewModelWith<RssFeedCellViewModel.Config>, Mvvm
     func openPreferences() {
 #if !os(visionOS)
         Task {
-            let vc = RssListPreferencesViewModel(with: model).resolveVC()
+            let vc = await RssListPreferencesViewModel(with: model).resolveVC()
             let nvc = await UINavigationController(rootViewController: vc)
             await navigationService?()?.navigate(to: nvc, by: .present(wrapInNavigation: false))
         }

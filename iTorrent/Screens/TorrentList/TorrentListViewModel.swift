@@ -73,7 +73,8 @@ class TorrentListViewModel: BaseViewModel {
                 sortingType,
                 sortingReverced,
                 isGroupedByState,
-                groupsSortingArray
+                groupsSortingArray,
+                on: .global(qos: .userInitiated)
             ) { _, torrentHandles, searchQuery, sortingType, sortingReverced, isGrouping, sortingArray in
                 var torrentHandles = torrentHandles
                 if !searchQuery.isEmpty {
@@ -87,7 +88,9 @@ class TorrentListViewModel: BaseViewModel {
                 } else {
                     return makeUngroupedSection(with: torrents)
                 }
-            }.assign(to: &$sections)
+            }
+            .handleEvents(receiveOutput: { [unowned self] _ in firstLoading = false })
+            .assign(to: &$sections)
             $searchQuery.assign(to: &rssSearchViewModel.$searchQuery)
 //        }
     }
@@ -95,15 +98,17 @@ class TorrentListViewModel: BaseViewModel {
     static func searchFilter(_ text: String, by query: String) -> Bool {
         query.split(separator: " ").allSatisfy { text.localizedCaseInsensitiveContains($0) }
     }
+
+    private var firstLoading = true
     @Injected private var rssFeedProvider: RssFeedProvider
 }
 
 extension TorrentListViewModel {
     var emptyContentType: AnyPublisher<EmptyType?, Never> {
-        Publishers.combineLatest($sections, $searchQuery) { sections, searchQuery in
+        Publishers.combineLatest($sections, $searchQuery) { [unowned self] sections, searchQuery in
             if sections.isEmpty || sections.allSatisfy({ $0.items.isEmpty }) {
                 if !searchQuery.isEmpty { return EmptyType.badSearch }
-                return EmptyType.noData
+                return firstLoading ? nil : EmptyType.noData
             }
             return nil
         }.eraseToAnyPublisher()

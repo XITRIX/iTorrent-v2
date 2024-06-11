@@ -25,21 +25,21 @@ class TorrentMonitoringService: @unchecked Sendable {
     init() {
         disposeBag.bind {
             torrentService.updateNotifier.sink { [unowned self] updateModel in
-                Task { try await checkDoneNotification(with: updateModel) }
+                checkDoneNotification(with: updateModel)
             }
         }
     }
 }
 
 private extension TorrentMonitoringService {
-    func checkDoneNotification(with model: TorrentService.TorrentUpdateModel) async throws {
-        guard await PreferencesStorage.shared.isDownloadNotificationsEnabled,
+    func checkDoneNotification(with model: TorrentService.TorrentUpdateModel) {
+        guard PreferencesStorage.shared.isDownloadNotificationsEnabled,
               model.oldSnapshot.state != .checkingFiles,
               model.oldSnapshot.progressWanted < 1,
               model.handle.snapshot.progressWanted >= 1
         else { return }
 
-        if await PreferencesStorage.shared.stopSeedingOnFinish {
+        if PreferencesStorage.shared.stopSeedingOnFinish {
             model.handle.pause()
         }
 
@@ -55,7 +55,7 @@ private extension TorrentMonitoringService {
         let identifier = hash
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
-        try await UNUserNotificationCenter.current().add(request)
+        UNUserNotificationCenter.current().add(request)
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber += 1
         }
