@@ -85,7 +85,7 @@ private extension TorrentFilesViewController {
 }
 
 private extension TorrentFilesViewController {
-    class CollectionDeletates: DelegateObject<TorrentFilesViewController>, UICollectionViewDataSource, UICollectionViewDelegate {
+    class CollectionDeletates: DelegateObject<TorrentFilesViewController>, UICollectionViewDataSource, UICollectionViewDelegate, @unchecked Sendable {
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             parent.viewModel.filesCount
         }
@@ -129,7 +129,7 @@ private extension TorrentFilesViewController {
         }
     }
 
-    class PreviewDeletates: DelegateObject<TorrentFilesViewController>, QLPreviewControllerDataSource {
+    class PreviewDeletates: DelegateObject<TorrentFilesViewController>, QLPreviewControllerDataSource, @unchecked Sendable {
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
             parent.viewModel.filesForPreview.count
         }

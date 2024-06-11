@@ -155,9 +155,11 @@ extension TorrentAddViewModel {
         guard TorrentService.shared.torrents.contains(where: { $0.infoHashes == torrentFile.infoHashes })
         else { return false }
 
-        let alert = UIAlertController(title: %"addTorrent.exists", message: %"addTorrent.\(torrentFile.infoHashes.best.hex)_exists", preferredStyle: .alert)
-        alert.addAction(.init(title: %"common.close", style: .cancel))
-        navigationContext.present(alert, animated: true)
+        Task {
+            let alert = await UIAlertController(title: %"addTorrent.exists", message: %"addTorrent.\(torrentFile.infoHashes.best.hex)_exists", preferredStyle: .alert)
+            await alert.addAction(.init(title: %"common.close", style: .cancel))
+            await navigationContext.present(alert, animated: true)
+        }
         return true
     }
 }

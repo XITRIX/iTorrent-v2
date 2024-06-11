@@ -84,6 +84,7 @@ private extension ConnectionPreferencesViewModel {
         }
     }
 
+    @MainActor
     func uiAction(from policy: Session.Settings.EncryptionPolicy) -> UIAction {
         UIAction(title: policy.name, attributes: policy == .disabled ? [.destructive] : [], state: preferences.encryptionPolicy == policy ? .on : .off) { [preferences] _ in preferences.encryptionPolicy = policy }
     }

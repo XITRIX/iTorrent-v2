@@ -9,10 +9,10 @@ import LibTorrent
 import Combine
 import MvvmFoundation
 
-private var TorrentHandleUnthrottledUpdatePublisherKey: UInt8 = 0
-private var TorrentHandleUpdatePublisherKey: UInt8 = 0
-private var TorrentHandleRemovePublisherKey: UInt8 = 0
-private var TorrentHandleDisposeBagKey: UInt8 = 0
+nonisolated(unsafe) private var TorrentHandleUnthrottledUpdatePublisherKey: UInt8 = 0
+nonisolated(unsafe) private var TorrentHandleUpdatePublisherKey: UInt8 = 0
+nonisolated(unsafe) private var TorrentHandleRemovePublisherKey: UInt8 = 0
+nonisolated(unsafe) private var TorrentHandleDisposeBagKey: UInt8 = 0
 
 extension TorrentHandle {
     var disposeBag: DisposeBag {

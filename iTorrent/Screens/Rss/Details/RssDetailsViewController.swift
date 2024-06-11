@@ -62,14 +62,14 @@ private extension RssDetailsViewController {
 }
 
 private extension RssDetailsViewController {
-    class Delegates: DelegateObject<RssDetailsViewController>, WKNavigationDelegate {
-        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    class Delegates: DelegateObject<RssDetailsViewController>, WKNavigationDelegate, @unchecked Sendable {
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
             guard navigationAction.navigationType == .linkActivated
-            else { return decisionHandler(.allow) }
+            else { return .allow }
 
             guard let url = navigationAction.request.url,
-                  UIApplication.shared.canOpenURL(url)
-            else { return decisionHandler(.allow) }
+                  await UIApplication.shared.canOpenURL(url)
+            else { return .allow }
 
             Task {
                 if let torrentFile = await TorrentFile(remote: url) {
@@ -79,8 +79,8 @@ private extension RssDetailsViewController {
                     await parent.present(safari, animated: true)
                 }
             }
-            
-            decisionHandler(.cancel)
+
+            return .cancel
         }
     }
 }
