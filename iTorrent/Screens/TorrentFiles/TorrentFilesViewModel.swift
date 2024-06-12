@@ -67,7 +67,7 @@ extension TorrentFilesViewModel {
     }
 }
 
-class TorrentFilesViewModel: BaseViewModelWith<TorrentFilesViewModel.Config> {
+class TorrentFilesViewModel: BaseViewModelWith<TorrentFilesViewModel.Config>, @unchecked Sendable {
     private var torrentHandle: TorrentHandle!
     private var rootDirectory: PathNode!
     private var keys: [String]!

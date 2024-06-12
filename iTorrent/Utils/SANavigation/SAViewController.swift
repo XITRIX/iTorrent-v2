@@ -10,6 +10,7 @@ import MvvmFoundation
 import Combine
 import UIKit
 
+@MainActor
 class SAViewController<ViewModel: MvvmViewModelProtocol>: MvvmViewController<ViewModel> {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

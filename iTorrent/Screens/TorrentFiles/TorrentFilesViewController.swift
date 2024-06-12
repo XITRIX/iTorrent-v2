@@ -7,9 +7,9 @@
 
 import MvvmFoundation
 import UIKit
-import QuickLook
+@preconcurrency import QuickLook
 
-class TorrentFilesViewController<VM: TorrentFilesViewModel>: BaseViewController<VM> {
+class TorrentFilesViewController<VM: TorrentFilesViewModel>: BaseViewController<VM>, @unchecked Sendable {
     @IBOutlet private var collectionView: UICollectionView!
 
     private lazy var collectionDelegates = CollectionDeletates(parent: self)
@@ -129,11 +129,13 @@ private extension TorrentFilesViewController {
         }
     }
 
-    class PreviewDeletates: DelegateObject<TorrentFilesViewController>, QLPreviewControllerDataSource, @unchecked Sendable {
+    class PreviewDeletates: DelegateObject<TorrentFilesViewController>, @preconcurrency QLPreviewControllerDataSource {
+        @MainActor
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
             parent.viewModel.filesForPreview.count
         }
 
+        @MainActor
         func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
             let path = parent.viewModel.filesForPreview[index].path
             return TorrentService.downloadPath.appending(path: path) as NSURL

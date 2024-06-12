@@ -14,6 +14,7 @@ protocol ToolbarHidingProtocol {
     var isToolbarItemsHidden: Bool { get }
 }
 
+@MainActor
 class BaseViewController<ViewModel: MvvmViewModelProtocol>: SAViewController<ViewModel>, ToolbarHidingProtocol {
     var isToolbarItemsHidden: Bool { toolbarItems?.isEmpty ?? true }
     var useMarqueeLabel: Bool { true }

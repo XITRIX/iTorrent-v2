@@ -9,7 +9,7 @@ import Combine
 import MvvmFoundation
 import UIKit
 
-class RssChannelViewModel: BaseCollectionViewModelWith<RssModel> {
+class RssChannelViewModel: BaseCollectionViewModelWith<RssModel>, @unchecked Sendable {
     @Published var title: String = ""
     @Published var searchQuery: String = ""
 
@@ -30,20 +30,22 @@ class RssChannelViewModel: BaseCollectionViewModelWith<RssModel> {
             }
         }
 
-        trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
-            let itemModel = items[indexPath.item].model
+        Task { @MainActor in
+            trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+                let itemModel = items[indexPath.item].model
 
-            guard let index = model.items.firstIndex(where: { $0 == itemModel })
-            else { return nil }
+                guard let index = model.items.firstIndex(where: { $0 == itemModel })
+                else { return nil }
 
-            let readed = model.items[index].readed
-            let action = UIContextualAction(style: .normal, title: readed ? %"rsschannel.unseen" : %"rsschannel.seen", handler: { [unowned self] _, _, completion in
-                setSeen(!readed, for: index)
-                completion(true)
-            })
-//            action.image = readed ? .init(systemName: "eye.slash") : .init(systemName: "eye")
-            action.backgroundColor = PreferencesStorage.shared.tintColor
-            return .init(actions: [action])
+                let readed = model.items[index].readed
+                let action = UIContextualAction(style: .normal, title: readed ? %"rsschannel.unseen" : %"rsschannel.seen", handler: { [unowned self] _, _, completion in
+                    setSeen(!readed, for: index)
+                    completion(true)
+                })
+                //            action.image = readed ? .init(systemName: "eye.slash") : .init(systemName: "eye")
+                action.backgroundColor = PreferencesStorage.shared.tintColor
+                return .init(actions: [action])
+            }
         }
 
         refreshTask = { [weak self] in

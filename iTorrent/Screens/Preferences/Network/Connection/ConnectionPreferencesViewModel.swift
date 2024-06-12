@@ -10,7 +10,7 @@ import LibTorrent
 import MvvmFoundation
 import UIKit
 
-class ConnectionPreferencesViewModel: BasePreferencesViewModel {
+class ConnectionPreferencesViewModel: BasePreferencesViewModel, @unchecked Sendable {
     required init() {
         super.init()
         binding()
@@ -24,11 +24,11 @@ private extension ConnectionPreferencesViewModel {
     func reload() {
         title.send(%"preferences.network.connection")
 
-        var sections: [MvvmCollectionSectionModel] = []
-        defer { self.sections.send(sections) }
+        Task {
+            var sections: [MvvmCollectionSectionModel] = []
+            defer { self.sections.send(sections) }
 
-        sections.append(.init(id: "encryption", header: %"preferences.network.connection.encryption") {
-            PRButtonViewModel(with: .init(title: %"preferences.network.connection.encryption.mode", value: preferences.$encryptionPolicy.map(\.name).eraseToAnyPublisher(), accessories: [
+            let button = await PRButtonViewModel(with: .init(title: %"preferences.network.connection.encryption.mode", value: preferences.$encryptionPolicy.map(\.name).eraseToAnyPublisher(), accessories: [
                 .popUpMenu(
                     .init(title: %"preferences.network.connection.encryption.mode.action", children: [
                         uiAction(from: .enabled),
@@ -37,43 +37,47 @@ private extension ConnectionPreferencesViewModel {
                     ]), options: .init(tintColor: .tintColor)
                 ),
             ]))
-        })
 
-        sections.append(.init(id: "protocols", header: %"preferences.network.connection.protocols") {
-            PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.dht", value: preferences.$isDhtEnabled.binding))
-            PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.lsd", value: preferences.$isLsdEnabled.binding))
-            PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.utp", value: preferences.$isUtpEnabled.binding))
-            PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.upnp", value: preferences.$isUpnpEnabled.binding))
-            PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.nat", value: preferences.$isNatEnabled.binding))
-        })
+            sections.append(.init(id: "encryption", header: %"preferences.network.connection.encryption") {
+                button
+            })
 
-        sections.append(.init(id: "interfaces", header: %"preferences.network.interfaces", footer: %"preferences.network.interfaces.footer") {
+            sections.append(.init(id: "protocols", header: %"preferences.network.connection.protocols") {
+                PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.dht", value: preferences.$isDhtEnabled.binding))
+                PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.lsd", value: preferences.$isLsdEnabled.binding))
+                PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.utp", value: preferences.$isUtpEnabled.binding))
+                PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.upnp", value: preferences.$isUpnpEnabled.binding))
+                PRSwitchViewModel(with: .init(title: %"preferences.network.connection.protocols.nat", value: preferences.$isNatEnabled.binding))
+            })
+
+            sections.append(.init(id: "interfaces", header: %"preferences.network.interfaces", footer: %"preferences.network.interfaces.footer") {
 #if canImport(CoreTelephony) && !targetEnvironment(macCatalyst)
-            PRSwitchViewModel(with: .init(title: %"preferences.network.interfaces.cellular", value: preferences.$isCellularEnabled.binding, isDangerous: true))
+                PRSwitchViewModel(with: .init(title: %"preferences.network.interfaces.cellular", value: preferences.$isCellularEnabled.binding, isDangerous: true))
 #endif
-            PRSwitchViewModel(with: .init(title: %"preferences.network.interfaces.allInterfaces", value: preferences.$useAllAvailableInterfaces.binding, isDangerous: true))
-        })
+                PRSwitchViewModel(with: .init(title: %"preferences.network.interfaces.allInterfaces", value: preferences.$useAllAvailableInterfaces.binding, isDangerous: true))
+            })
 
-        sections.append(.init(id: "port", header: %"common.port") {
-            PRSwitchViewModel(with: .init(title: %"preferences.network.connection.port.default", value: preferences.$useDefaultPort.binding))
+            sections.append(.init(id: "port", header: %"common.port") {
+                PRSwitchViewModel(with: .init(title: %"preferences.network.connection.port.default", value: preferences.$useDefaultPort.binding))
 
-            if !preferences.useDefaultPort {
-                PRButtonViewModel(with: .init(title: %"preferences.network.connection.port.value", value: preferences.$port.map { String($0) }.eraseToAnyPublisher()) { [unowned self] in
-                    textInput(title: %"preferences.network.connection.port.value", placeholder: "6881", defaultValue: "\(preferences.port)", type: .numberPad) { [unowned self] res in
-                        dismissSelection.send()
-                        guard let res else { return }
-                        preferences.port = Int(res) ?? 6881
-                    }
-                })
-                PRButtonViewModel(with: .init(title: %"preferences.network.connection.port.retries", value: preferences.$portBindRetries.map { String($0) }.eraseToAnyPublisher()) { [unowned self] in
-                    textInput(title:  %"preferences.network.connection.port.retries", placeholder: "10", defaultValue: "\(preferences.portBindRetries)", type: .numberPad) { [unowned self] res in
-                        dismissSelection.send()
-                        guard let res else { return }
-                        preferences.portBindRetries = Int(res) ?? 10
-                    }
-                })
-            }
-        })
+                if !preferences.useDefaultPort {
+                    PRButtonViewModel(with: .init(title: %"preferences.network.connection.port.value", value: preferences.$port.map { String($0) }.eraseToAnyPublisher()) { [unowned self] in
+                        textInput(title: %"preferences.network.connection.port.value", placeholder: "6881", defaultValue: "\(preferences.port)", type: .numberPad) { [unowned self] res in
+                            dismissSelection.send()
+                            guard let res else { return }
+                            preferences.port = Int(res) ?? 6881
+                        }
+                    })
+                    PRButtonViewModel(with: .init(title: %"preferences.network.connection.port.retries", value: preferences.$portBindRetries.map { String($0) }.eraseToAnyPublisher()) { [unowned self] in
+                        textInput(title:  %"preferences.network.connection.port.retries", placeholder: "10", defaultValue: "\(preferences.portBindRetries)", type: .numberPad) { [unowned self] res in
+                            dismissSelection.send()
+                            guard let res else { return }
+                            preferences.portBindRetries = Int(res) ?? 10
+                        }
+                    })
+                }
+            })
+        }
     }
 
     func binding() {
@@ -84,9 +88,8 @@ private extension ConnectionPreferencesViewModel {
         }
     }
 
-    @MainActor
-    func uiAction(from policy: Session.Settings.EncryptionPolicy) -> UIAction {
-        UIAction(title: policy.name, attributes: policy == .disabled ? [.destructive] : [], state: preferences.encryptionPolicy == policy ? .on : .off) { [preferences] _ in preferences.encryptionPolicy = policy }
+    func uiAction(from policy: Session.Settings.EncryptionPolicy) async -> UIAction {
+        await UIAction(title: policy.name, attributes: policy == .disabled ? [.destructive] : [], state: preferences.encryptionPolicy == policy ? .on : .off) { [preferences] _ in preferences.encryptionPolicy = policy }
     }
 }
 
