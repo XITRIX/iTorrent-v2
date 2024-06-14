@@ -129,7 +129,7 @@ private extension TorrentFilesViewController {
         }
     }
 
-    class PreviewDeletates: DelegateObject<TorrentFilesViewController>, @preconcurrency QLPreviewControllerDataSource {
+    class PreviewDeletates: DelegateObject<TorrentFilesViewController>, QLPreviewControllerDataSource {
         @MainActor
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
             parent.viewModel.filesForPreview.count

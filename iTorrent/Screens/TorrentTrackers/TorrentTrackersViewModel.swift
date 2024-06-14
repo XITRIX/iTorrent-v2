@@ -10,7 +10,7 @@ import LibTorrent
 import MvvmFoundation
 import UIKit
 
-class TorrentTrackersViewModel: BaseViewModelWith<TorrentHandle> {
+class TorrentTrackersViewModel: BaseViewModelWith<TorrentHandle>, @unchecked Sendable {
     private var torrentHandle: TorrentHandle!
     @Published var trackers: [TrackerCellViewModel] = []
 
@@ -35,22 +35,24 @@ class TorrentTrackersViewModel: BaseViewModelWith<TorrentHandle> {
 
 extension TorrentTrackersViewModel {
     func addTrackers() {
-        #if !os(visionOS)
-        textMultilineInput(title: %"trackers.add.title", message: %"trackers.add.message", placeholder: "http://x.x.x.x:8080/announce", accept: %"common.add") { [unowned self] result in
-            guard let result else { return }
-            result.components(separatedBy: .newlines).forEach { urlString in
-                guard let url = URL(string: urlString) else { return }
+        Task {
+#if !os(visionOS)
+            await textMultilineInput(title: %"trackers.add.title", message: %"trackers.add.message", placeholder: "http://x.x.x.x:8080/announce", accept: %"common.add") { [unowned self] result in
+                guard let result else { return }
+                result.components(separatedBy: .newlines).forEach { urlString in
+                    guard let url = URL(string: urlString) else { return }
+                    torrentHandle.addTracker(url.absoluteString)
+                    reload()
+                }
+            }
+#else
+            await textInput(title: %"trackers.add.title.single", message: %"trackers.add.message.single", placeholder: "http://x.x.x.x:8080/announce", cancel: %"common.cancel", accept: %"common.add") { [unowned self] result in
+                guard let url = URL(string: result ?? "") else { return }
                 torrentHandle.addTracker(url.absoluteString)
                 reload()
             }
+#endif
         }
-        #else
-        textInput(title: %"trackers.add.title.single", message: %"trackers.add.message.single", placeholder: "http://x.x.x.x:8080/announce", cancel: %"common.cancel", accept: %"common.add") { [unowned self] result in
-            guard let url = URL(string: result ?? "") else { return }
-            torrentHandle.addTracker(url.absoluteString)
-            reload()
-        }
-        #endif
     }
 
     func removeSelected() {

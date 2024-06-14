@@ -20,7 +20,7 @@ class RssListPreferencesViewController<VM: RssListPreferencesViewModel>: BaseCol
         collectionView.alwaysBounceVertical = false
         collectionView.dragInteractionEnabled = false
 
-        token = collectionView.observe(\.contentSize, options: [.new]) { [unowned self] view, change in
+        token = collectionView.observe(\.contentSize, options: [.new]) { @MainActor [unowned self] view, change in
             preferredContentSize = view.contentSize
         }
 

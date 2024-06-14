@@ -13,14 +13,16 @@ import UIKit
 import MvvmFoundation
 #endif
 
-class LiveActivityService {
+actor LiveActivityService: @unchecked Sendable {
     init() {
 #if canImport(ActivityKit)
         disposeBag.bind {
             TorrentService.shared.updateNotifier
                 .filter { _ in PreferencesStorage.shared.backgroundMode == .location }
                 .sink { [unowned self] updateModel in
-                    updateLiveActivity(with: updateModel)
+                    Task {
+                        await updateLiveActivity(with: updateModel)
+                    }
                 }
         }
 #endif
@@ -32,15 +34,15 @@ class LiveActivityService {
 
 #if canImport(ActivityKit)
 private extension LiveActivityService {
-    func updateLiveActivity(with updateModel: TorrentService.TorrentUpdateModel) {
-        updateLiveActivity(with: updateModel.handle.snapshot)
+    func updateLiveActivity(with updateModel: TorrentService.TorrentUpdateModel) async {
+        await updateLiveActivity(with: updateModel.handle.snapshot)
     }
 
-    func showLiveActivity(with snapshot: TorrentHandle.Snapshot) {
+    func showLiveActivity(with snapshot: TorrentHandle.Snapshot) async {
         if #available(iOS 16.1, *) {
             let attributes = ProgressWidgetAttributes(name: snapshot.name, hash: snapshot.infoHashes.best.hex)
 
-            DispatchQueue.main.async {
+            await MainActor.run {
                 do {
                     _ = try Activity<ProgressWidgetAttributes>.request(attributes: attributes, contentState: snapshot.toLiveActivityState, pushType: .none)
                 } catch {
@@ -50,31 +52,29 @@ private extension LiveActivityService {
         }
     }
 
-    func updateLiveActivity(with snapshot: TorrentHandle.Snapshot) {
+    func updateLiveActivity(with snapshot: TorrentHandle.Snapshot) async {
         if #available(iOS 16.1, *) {
             guard ActivityAuthorizationInfo().areActivitiesEnabled
             else { return }
 
-            Task {
-                for activity in Activity<ProgressWidgetAttributes>.activities {
-                    if activity.attributes.name == snapshot.name {
-                        if snapshot.friendlyState == .downloading {
-                            if #available(iOS 16.2, *) {
-                                await activity.update(.init(state: snapshot.toLiveActivityState, staleDate: .now + 10))
-                            } else {
-                                await activity.update(using: snapshot.toLiveActivityState)
-                            }
-                            return
+            for activity in Activity<ProgressWidgetAttributes>.activities {
+                if activity.attributes.name == snapshot.name {
+                    if snapshot.friendlyState == .downloading {
+                        if #available(iOS 16.2, *) {
+                            await activity.update(.init(state: snapshot.toLiveActivityState, staleDate: .now + 10))
                         } else {
-                            await activity.end(dismissalPolicy: .immediate)
-                            return
+                            await activity.update(using: snapshot.toLiveActivityState)
                         }
+                        return
+                    } else {
+                        await activity.end(dismissalPolicy: .immediate)
+                        return
                     }
                 }
+            }
 
-                if snapshot.friendlyState == .downloading {
-                    showLiveActivity(with: snapshot)
-                }
+            if snapshot.friendlyState == .downloading {
+                await showLiveActivity(with: snapshot)
             }
         }
     }

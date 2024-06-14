@@ -13,7 +13,7 @@ import Network
 import CoreTelephony
 #endif
 
-class NetworkMonitoringService {
+class NetworkMonitoringService: @unchecked Sendable {
     @Published var availableInterfaces: [NWInterface] = []
 #if canImport(CoreTelephony) && !targetEnvironment(macCatalyst)
     @Published var cellularState: CTCellularDataRestrictedState = .restrictedStateUnknown

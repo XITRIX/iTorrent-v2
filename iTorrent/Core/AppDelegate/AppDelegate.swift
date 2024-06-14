@@ -10,6 +10,8 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    lazy var notificationCenterDelegate = NotificationCenterDelegate(parent: self)
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         registerFirebase()
         registerPushNotifications(application)

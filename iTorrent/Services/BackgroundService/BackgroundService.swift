@@ -22,7 +22,7 @@ extension BackgroundService {
     }
 }
 
-class BackgroundService: BackgroundServiceProtocol {
+class BackgroundService: BackgroundServiceProtocol, @unchecked Sendable {
     @Published var isRunningPublisher: Bool = false
 
     public static let shared = BackgroundService()

@@ -20,29 +20,17 @@ struct ProgressWidgetLiveActivity: Widget {
     }
 
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: ProgressWidgetAttributes.self) { context in
+        let config = ActivityConfiguration(for: ProgressWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
-            VStack(spacing: 8) {
-                HStack {
-                    Text(context.attributes.name)
-                    Spacer()
-                }
-                HStack {
-                    Text(String("\(context.state.downSpeed.bitrateToHumanReadable)/s ↓"))
-                    Text(String(" | "))
-                    Text(String("\(context.state.upSpeed.bitrateToHumanReadable)/s ↑"))
-                    Spacer()
-                    Text(String("\(String(format: "%.2f", context.state.progress * 100))%"))
-                }
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-
-                ProgressView(value: context.state.progress)
-                    .progressViewStyle(.linear)
+            if #available(iOSApplicationExtension 18, *) {
+                ProgressWidgetLiveActivityWatchSupportContent(context: context)
+                    .tint(Color(uiColor: tintColor))
+                    .padding()
+            } else {
+                ProgressWidgetLiveActivityContent(context: context)
+                    .tint(Color(uiColor: tintColor))
+                    .padding()
             }
-            .widgetURL(URL(string: "iTorrent:hash:\(context.attributes.hash)"))
-            .tint(Color(uiColor: tintColor))
-            .padding()
         } dynamicIsland: { context in
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
@@ -80,10 +68,87 @@ struct ProgressWidgetLiveActivity: Widget {
             .widgetURL(URL(string: "iTorrent:hash:\(context.attributes.hash)"))
             .keylineTint(Color(uiColor: tintColor))
         }
+
+        if #available(iOS 18.0, *) {
+            return config.supplementalActivityFamilies([.small])
+        } else {
+            return config
+        }
     }
 }
 
-//#Preview("Notification", as: .content, using: ProgressWidgetAttributes.preview) {
+@available(iOS 18.0, *)
+struct ProgressWidgetLiveActivityWatchSupportContent: View {
+    @Environment(\.activityFamily) var activityFamily
+    let context: ActivityViewContext<ProgressWidgetAttributes>
+
+    var body: some View {
+        if activityFamily == .medium {
+            ProgressWidgetLiveActivityContent(context: context)
+        } else {
+            VStack(spacing: 8) {
+                HStack {
+                    Text(context.attributes.name)
+                        .font(.caption)
+                    Spacer()
+                }
+                HStack {
+                    Text(String("\(context.state.downSpeed.bitrateToHumanReadable)/s ↓"))
+                    Spacer()
+                    Text(String("\(context.state.upSpeed.bitrateToHumanReadable)/s ↑"))
+                }
+                .font(.caption2)
+                .foregroundColor(.secondary)
+
+                HStack {
+                    ProgressView(value: context.state.progress)
+                        .progressViewStyle(.linear)
+                    Text(String("\(String(format: "%.2f", context.state.progress * 100))%"))
+                        .font(.caption2)
+                        .monospaced()
+                }
+            }
+            .widgetURL(URL(string: "iTorrent:hash:\(context.attributes.hash)"))
+        }
+    }
+}
+
+struct ProgressWidgetLiveActivityContent: View {
+    let context: ActivityViewContext<ProgressWidgetAttributes>
+
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text(context.attributes.name)
+                Spacer()
+            }
+            HStack {
+                Text(String("\(context.state.downSpeed.bitrateToHumanReadable)/s ↓"))
+                Text(String(" | "))
+                Text(String("\(context.state.upSpeed.bitrateToHumanReadable)/s ↑"))
+                Spacer()
+                Text(String("\(String(format: "%.2f", context.state.progress * 100))%"))
+            }
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+
+            ProgressView(value: context.state.progress)
+                .progressViewStyle(.linear)
+        }
+        .widgetURL(URL(string: "iTorrent:hash:\(context.attributes.hash)"))
+    }
+}
+
+//#Preview("Progress", 
+//         as: .dynamicIsland(.compact),
+//         using: ProgressWidgetAttributes(name: "Test torrent", hash: "")
+//) {
+//    ProgressWidgetLiveActivity()
+//} contentStates: {
+//    ProgressWidgetAttributes.ContentState(progress: 0.2, downSpeed: 2000, upSpeed: 1000, timeRemainig: "Осталось САСАТБ", timeStamp: .now)
+//}
+
+//#Preview("Notification", as: .content, using: ProgressWidgetAttributes(name: "Test torrent", hash: "")) {
 //    ProgressWidgetLiveActivity()
 //} contentStates: {
 //    ProgressWidgetAttributes.ContentState(progress: 0.2, downSpeed: 2000, upSpeed: 1000, timeRemainig: "Осталось САСАТБ", timeStamp: .now)

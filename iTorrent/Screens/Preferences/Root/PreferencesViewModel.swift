@@ -159,7 +159,7 @@ private extension PreferencesViewModel {
             let version = "iTorrent: v\(appVersion)-\(appBuild) | LibTorrent: v\(libtorrentVersion)"
             sections.append(.init(id: "version", header: %"preferences.version", footer: version, style: .insetGrouped) {
                 PRButtonViewModel(with: .init(title: %"preferences.version.github", value: Just(%"common.open").eraseToAnyPublisher(), selectAction: { [unowned self] in
-                    Task { await UIApplication.shared.open(.init(string: "https://github.com/XITRIX/iTorrent")!) }
+                    Task { @MainActor in UIApplication.shared.open(.init(string: "https://github.com/XITRIX/iTorrent")!) }
                     dismissSelection.send()
                 }))
             })

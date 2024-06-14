@@ -9,7 +9,7 @@ import Combine
 import LibTorrent
 import MvvmFoundation
 
-class RssDetailsViewModel: BaseViewModelWith<RssItemModel> {
+class RssDetailsViewModel: BaseViewModelWith<RssItemModel>, @unchecked Sendable {
     var rssModel: RssItemModel!
     @Published var title: String = ""
 
