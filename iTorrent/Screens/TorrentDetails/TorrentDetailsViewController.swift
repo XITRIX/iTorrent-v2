@@ -24,7 +24,7 @@ class TorrentDetailsViewController<VM: TorrentDetailsViewModel>: BaseViewControl
         navigationItem.largeTitleDisplayMode = .never
 
         disposeBag.bind {
-            viewModel.dismissSignal.sink { [unowned self] _ in
+            viewModel.dismissPublisher.sink { [unowned self] _ in
                 guard !((splitViewController as? BaseSplitViewController)?.showEmptyDetail() ?? false)
                 else { return }
 

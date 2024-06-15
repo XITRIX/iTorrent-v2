@@ -5,14 +5,15 @@
 //  Created by Daniil Vinogradov on 31/10/2023.
 //
 
-import LibTorrent
 import Combine
+import LibTorrent
 import MvvmFoundation
 
-nonisolated(unsafe) private var TorrentHandleUnthrottledUpdatePublisherKey: UInt8 = 0
-nonisolated(unsafe) private var TorrentHandleUpdatePublisherKey: UInt8 = 0
-nonisolated(unsafe) private var TorrentHandleRemovePublisherKey: UInt8 = 0
-nonisolated(unsafe) private var TorrentHandleDisposeBagKey: UInt8 = 0
+private nonisolated(unsafe) var TorrentHandleUnthrottledUpdatePublisherKey: UInt8 = 0
+private nonisolated(unsafe) var TorrentHandleUpdatePublisherKey: UInt8 = 0
+private nonisolated(unsafe) var TorrentHandleRemovePublisherKey: UInt8 = 0
+private nonisolated(unsafe) var TorrentHandleDisposeBagKey: UInt8 = 0
+private nonisolated(unsafe) var TorrentHandleStopOnTravelKey: UInt8 = 0
 
 extension TorrentHandle {
     var disposeBag: DisposeBag {
@@ -41,7 +42,7 @@ extension TorrentHandle {
         }
         return obj
     }
-    
+
     /// Does not contain updated Snapshot yet, it creates before updatePublisher will be fired
     ///
     /// Better not use this one, prefer to use `updatePublisher`
@@ -61,6 +62,15 @@ extension TorrentHandle {
             return objc_getAssociatedObject(self, &TorrentHandleRemovePublisherKey) as! PassthroughSubject<TorrentHandle, Never>
         }
         return obj
+    }
+
+    var stopOnTravel: Bool {
+        get {
+            objc_getAssociatedObject(self, &TorrentHandleStopOnTravelKey) as? Bool ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &TorrentHandleStopOnTravelKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
     }
 }
 
@@ -108,7 +118,7 @@ extension TorrentHandle.State {
 
 extension TorrentHandle {
     struct Metadata: Codable {
-        var dateAdded: Date = Date()
+        var dateAdded: Date = .init()
     }
 
     var metadata: Metadata {

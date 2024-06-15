@@ -20,12 +20,16 @@ class ToggleCellViewModel: BaseViewModel, ObservableObject {
 
     @Published var title: String = ""
     @Published var isOn: Bool = false
+    @Published var isEnabled: Bool = true
     @Published var spacer: Double = 0
+    @Published var isBold: Bool = true
 
-    init(title: String = "", isOn: Bool = false, spacer: Double = 24) {
+    init(title: String = "", isOn: Bool = false, isEnabled: Bool = true, spacer: Double = 24, isBold: Bool = true) {
         self.title = title
         self.isOn = isOn
+        self.isEnabled = isEnabled
         self.spacer = spacer
+        self.isBold = isBold
     }
 
     required init() {

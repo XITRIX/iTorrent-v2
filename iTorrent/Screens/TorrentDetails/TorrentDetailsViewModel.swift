@@ -17,57 +17,18 @@ class TorrentDetailsViewModel: BaseViewModelWith<TorrentHandle> {
     @Published var title: String = ""
     @Published var isPaused: Bool = false
 
-    let dismissSignal = PassthroughSubject<Void, Never>()
+    var dismissPublisher: AnyPublisher<Void, Never> { dismissSignal.eraseToAnyPublisher() }
 
     override func prepare(with model: TorrentHandle) {
         torrentHandle = model
         title = model.name
 
+        setup()
         dataUpdate()
         reload()
-
-        disposeBag.bind {
-            torrentHandle.updatePublisher
-                .sink { [unowned self] _ in
-                    dataUpdate()
-                }
-
-            torrentHandle.updatePublisher
-                .map { $0.handle.snapshot.friendlyState }
-                .removeDuplicates()
-                .sink { [unowned self] _ in
-                    reload()
-                }
-
-            torrentHandle.removePublisher.sink { [unowned self] _ in
-                dismissSignal.send()
-            }
-
-            sequentialModel.$isOn.sink { [unowned self] value in
-                torrentHandle.setSequentialDownload(value)
-            }
-        }
-
-        hashModel.longPressAction = { [unowned self] in
-            UIPasteboard.general.string = hashModel.detail
-            alertWithTimer(message: %"details.copy.hash.title")
-        }
-
-        hashModelV2.longPressAction = { [unowned self] in
-            UIPasteboard.general.string = hashModelV2.detail
-            alertWithTimer(message: %"details.copy.hashV2.title")
-        }
-
-        creatorModel.longPressAction = { [unowned self] in
-            UIPasteboard.general.string = creatorModel.detail
-            alertWithTimer(message: %"details.copy.creator.title")
-        }
-
-        commentModel.longPressAction = { [unowned self] in
-            UIPasteboard.general.string = commentModel.detail
-            alertWithTimer(message: %"details.copy.comment.title")
-        }
     }
+
+    private let dismissSignal = PassthroughSubject<Void, Never>()
 
     private let stateModel = DetailCellViewModel(title: %"details.state")
 
@@ -257,6 +218,50 @@ private extension TorrentDetailsViewModel {
             trackersModel
             filesModel
         })
+    }
+
+    func setup() {
+        disposeBag.bind {
+            torrentHandle.updatePublisher
+                .sink { [unowned self] _ in
+                    dataUpdate()
+                }
+
+            torrentHandle.updatePublisher
+                .map { $0.handle.snapshot.friendlyState }
+                .removeDuplicates()
+                .sink { [unowned self] _ in
+                    reload()
+                }
+
+            torrentHandle.removePublisher.sink { [unowned self] _ in
+                dismissSignal.send()
+            }
+
+            sequentialModel.$isOn.sink { [unowned self] value in
+                torrentHandle.setSequentialDownload(value)
+            }
+        }
+
+        hashModel.longPressAction = { [unowned self] in
+            UIPasteboard.general.string = hashModel.detail
+            alertWithTimer(message: %"details.copy.hash.title")
+        }
+
+        hashModelV2.longPressAction = { [unowned self] in
+            UIPasteboard.general.string = hashModelV2.detail
+            alertWithTimer(message: %"details.copy.hashV2.title")
+        }
+
+        creatorModel.longPressAction = { [unowned self] in
+            UIPasteboard.general.string = creatorModel.detail
+            alertWithTimer(message: %"details.copy.creator.title")
+        }
+
+        commentModel.longPressAction = { [unowned self] in
+            UIPasteboard.general.string = commentModel.detail
+            alertWithTimer(message: %"details.copy.comment.title")
+        }
     }
 }
 

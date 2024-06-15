@@ -5,9 +5,10 @@
 //  Created by Daniil Vinogradov on 03/11/2023.
 //
 
+import AVKit
 import MvvmFoundation
-import UIKit
 @preconcurrency import QuickLook
+import UIKit
 
 class TorrentFilesViewController<VM: TorrentFilesViewModel>: BaseViewController<VM>, @unchecked Sendable {
     @IBOutlet private var collectionView: UICollectionView!
@@ -98,6 +99,7 @@ private extension TorrentFilesViewController {
                 let vm = parent.viewModel.fileModel(for: node.index)
                 vm.previewAction = { [unowned self] in
                     parent.previewAction(start: node.index)
+//                    parent.playerAction(start: node.index)
                 }
                 cell.setup(with: vm)
                 return cell
@@ -130,12 +132,12 @@ private extension TorrentFilesViewController {
     }
 
     class PreviewDeletates: DelegateObject<TorrentFilesViewController>, QLPreviewControllerDataSource {
-        @MainActor
+//        @MainActor
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
             parent.viewModel.filesForPreview.count
         }
 
-        @MainActor
+//        @MainActor
         func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
             let path = parent.viewModel.filesForPreview[index].path
             return TorrentService.downloadPath.appending(path: path) as NSURL
@@ -150,5 +152,25 @@ private extension TorrentFilesViewController {
         vc.dataSource = previewDelegates
         vc.currentPreviewItemIndex = startIndex
         present(vc, animated: true)
+    }
+
+    func playerAction(start fileIndex: Int) {
+        guard let startIndex = viewModel.filesForPreview.firstIndex(where: { $0.index == fileIndex })
+        else { return }
+
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {}
+
+        let path = viewModel.filesForPreview[startIndex].path
+        let url = TorrentService.downloadPath.appending(path: path)
+        let player = AVPlayer(url: url)
+//        player.
+        let playerController = AVPlayerViewController()
+        playerController.canStartPictureInPictureAutomaticallyFromInline = true
+        playerController.allowsPictureInPicturePlayback = true
+        playerController.player = player
+        present(playerController, animated: true)
     }
 }

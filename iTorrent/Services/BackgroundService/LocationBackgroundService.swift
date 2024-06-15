@@ -8,9 +8,20 @@
 import CoreLocation
 
 class LocationBackgroundService: NSObject, @unchecked Sendable {
+//#if IS_EU
+    nonisolated(unsafe) static weak var shared: LocationBackgroundService?
+    @Published var currentLocation: CLLocation?
+    @Published var isAllowed: Bool = false
+//#endif
+
     override init() {
         super.init()
         locationManager.delegate = self
+
+#if IS_EU
+        isAllowed = locationManager.authorizationStatus != .denied && locationManager.authorizationStatus != .restricted
+        Self.shared = self
+#endif
     }
 
     var isRunning: Bool = false
@@ -69,6 +80,8 @@ private extension LocationBackgroundService {
 
 extension LocationBackgroundService: CLLocationManagerDelegate {
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        isAllowed = manager.authorizationStatus != .denied && manager.authorizationStatus != .restricted
+
         guard manager.authorizationStatus != .notDetermined
         else { return }
 
@@ -77,4 +90,10 @@ extension LocationBackgroundService: CLLocationManagerDelegate {
             continuation = nil
         }
     }
+
+#if IS_EU
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        currentLocation = locations.last
+    }
+#endif
 }

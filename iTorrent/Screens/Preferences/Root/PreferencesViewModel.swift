@@ -19,6 +19,8 @@ class PreferencesViewModel: BasePreferencesViewModel, @unchecked Sendable {
     private let colorPickerVM = PRColorPickerViewModel()
     private let storageVM = PRStorageViewModel()
 
+    private let stopOnTravelModel = ToggleCellViewModel(title: %"preferences.seeding.stopOnTravel", isOn: PreferencesStorage.shared.backgroundMode == .location, isBold: false)
+
     @Injected private var preferences: PreferencesStorage
     @Injected private var webServerService: WebServerService
 }
@@ -31,6 +33,28 @@ private extension PreferencesViewModel {
                 .sink { [unowned self] _ in
                 reload()
             }
+
+#if IS_EU
+            stopOnTravelModel.$isOn.sink { [unowned self] value in
+                if value {
+                    alert(title: %"preferences.seeding.stopOnTravel.title", message: %"preferences.seeding.stopOnTravel.message", style: .alert, actions: [
+                        .init(title: %"common.cancel", style: .cancel),
+                        .init(title: %"common.enable", style: .default) {
+                            PreferencesStorage.shared.backgroundMode = .location
+                        }
+                    ])
+                } else {
+                    PreferencesStorage.shared.backgroundMode = .audio
+                }
+            }
+
+            LocationBackgroundService.shared?.$isAllowed.sink { [unowned self] isAllowed in
+                stopOnTravelModel.isEnabled = isAllowed
+                if !isAllowed {
+                    stopOnTravelModel.isOn = false
+                }
+            }
+#endif
         }
     }
 
@@ -75,6 +99,8 @@ private extension PreferencesViewModel {
                 PRSwitchViewModel(with: .init(title: %"preferences.storage.allocate", value: preferences.$allocateMemory.binding))
             })
 
+
+#if !IS_EU
             sections.append(.init(id: "background", header: %"preferences.background") {
                 PRSwitchViewModel(with: .init(title: %"preferences.background.enable", value: preferences.$isBackgroundDownloadEnabled.binding))
 
@@ -84,9 +110,13 @@ private extension PreferencesViewModel {
                     PRSwitchViewModel(with: .init(title: %"preferences.background.location.indicator.enable", value: preferences.$isBackgroundLocationIndicatorEnabled.binding))
                 }
             })
+#endif
 
             sections.append(.init(id: "seeding", header: %"preferences.seeding") {
-                PRSwitchViewModel(with: .init(title: %"preferences.seeding.stopOnFinish", value: preferences.$stopSeedingOnFinish.binding))
+                PRSwitchViewModel(with: .init(title: %"preferences.seeding.stopOnFinish", value: preferences.$stopSeedingOnFinish.binding, isDangerous: true))
+//#if IS_EU
+//                stopOnTravelModel
+//#endif
             })
 
             sections.append(.init(id: "torrentQueueLimits", header: %"preferences.queueLimits") {

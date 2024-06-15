@@ -16,8 +16,9 @@ struct ToggleCellView: MvvmSwiftUICellProtocol {
 //            Spacer(minLength: viewModel.spacer)
             Toggle(isOn: $viewModel.isOn) {
                 Text(viewModel.title)
-                    .fontWeight(.semibold)
+                    .fontWeight(viewModel.isBold ? .semibold : .regular)
             }
+            .disabled(!viewModel.isEnabled)
         }
         .systemMinimumHeight()
     }

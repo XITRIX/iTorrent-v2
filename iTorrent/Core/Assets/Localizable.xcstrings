@@ -2721,13 +2721,61 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stop on finish"
+            "value" : "Don't start automatically"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Остановить по готовности"
+            "value" : "Не начинать автоматически"
+          }
+        }
+      }
+    },
+    "preferences.seeding.stopOnTravel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop on travel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остановить при движении"
+          }
+        }
+      }
+    },
+    "preferences.seeding.stopOnTravel.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This option will allow app to remember the location where seeding was started and stop it if you'll move too far from this place"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Данная опция позволит приложению запоминать место где начиналась раздача и остановить её, если вы ушли достаточно далеко от туда"
+          }
+        }
+      }
+    },
+    "preferences.seeding.stopOnTravel.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop on travel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остановить при движении"
           }
         }
       }
