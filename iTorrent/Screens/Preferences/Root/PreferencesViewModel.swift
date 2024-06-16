@@ -15,7 +15,7 @@ class PreferencesViewModel: BasePreferencesViewModel, @unchecked Sendable {
         binding()
         reload()
     }
-    
+
     private let colorPickerVM = PRColorPickerViewModel()
     private let storageVM = PRStorageViewModel()
 
@@ -31,17 +31,16 @@ private extension PreferencesViewModel {
             preferences.$backgroundMode
                 .receive(on: .main)
                 .sink { [unowned self] _ in
-                reload()
-            }
+                    reload()
+                }
 
-#if IS_EU
             stopOnTravelModel.$isOn.sink { [unowned self] value in
                 if value {
                     alert(title: %"preferences.seeding.stopOnTravel.title", message: %"preferences.seeding.stopOnTravel.message", style: .alert, actions: [
                         .init(title: %"common.cancel", style: .cancel),
                         .init(title: %"common.enable", style: .default) {
                             PreferencesStorage.shared.backgroundMode = .location
-                        }
+                        },
                     ])
                 } else {
                     PreferencesStorage.shared.backgroundMode = .audio
@@ -54,7 +53,6 @@ private extension PreferencesViewModel {
                     stopOnTravelModel.isOn = false
                 }
             }
-#endif
         }
     }
 
@@ -79,7 +77,7 @@ private extension PreferencesViewModel {
                 .popUpMenu(
                     .init(title: %"preferences.background.mode.action", children: [
                         uiAction(from: .audio),
-                        uiAction(from: .location)
+                        uiAction(from: .location),
                     ]), options: .init(tintColor: .tintColor)
                 ),
             ]))
@@ -99,24 +97,23 @@ private extension PreferencesViewModel {
                 PRSwitchViewModel(with: .init(title: %"preferences.storage.allocate", value: preferences.$allocateMemory.binding))
             })
 
+            if !MarketplaceHelper.shared.isForAppleDistribution {
+                sections.append(.init(id: "background", header: %"preferences.background") {
+                    PRSwitchViewModel(with: .init(title: %"preferences.background.enable", value: preferences.$isBackgroundDownloadEnabled.binding))
 
-#if !IS_EU
-            sections.append(.init(id: "background", header: %"preferences.background") {
-                PRSwitchViewModel(with: .init(title: %"preferences.background.enable", value: preferences.$isBackgroundDownloadEnabled.binding))
+                    backgroundModeButtonVM
 
-                backgroundModeButtonVM
-
-                if preferences.backgroundMode == .location {
-                    PRSwitchViewModel(with: .init(title: %"preferences.background.location.indicator.enable", value: preferences.$isBackgroundLocationIndicatorEnabled.binding))
-                }
-            })
-#endif
+                    if preferences.backgroundMode == .location {
+                        PRSwitchViewModel(with: .init(title: %"preferences.background.location.indicator.enable", value: preferences.$isBackgroundLocationIndicatorEnabled.binding))
+                    }
+                })
+            }
 
             sections.append(.init(id: "seeding", header: %"preferences.seeding") {
                 PRSwitchViewModel(with: .init(title: %"preferences.seeding.stopOnFinish", value: preferences.$stopSeedingOnFinish.binding, isDangerous: true))
-//#if IS_EU
-//                stopOnTravelModel
-//#endif
+//                if MarketplaceHelper.shared.isForAppleDistribution {
+//                    stopOnTravelModel
+//                }
             })
 
             sections.append(.init(id: "torrentQueueLimits", header: %"preferences.queueLimits") {
@@ -242,5 +239,4 @@ private extension BackgroundService.Mode {
             return %"preferences.background.mode.location"
         }
     }
-
 }
