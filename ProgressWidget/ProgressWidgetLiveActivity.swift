@@ -22,19 +22,19 @@ struct ProgressWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         let config = ActivityConfiguration(for: ProgressWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
-#if swift(>=6)
+//#if swift(>=6)
             if #available(iOSApplicationExtension 18, *) {
                 ProgressWidgetLiveActivityWatchSupportContent(context: context)
                     .tint(Color(uiColor: tintColor))
                     .padding()
             } else {
-#endif
+//#endif
                 ProgressWidgetLiveActivityContent(context: context)
                     .tint(Color(uiColor: tintColor))
                     .padding()
-#if swift(>=6)
+//#if swift(>=6)
             }
-#endif
+//#endif
         } dynamicIsland: { context in
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
@@ -73,20 +73,20 @@ struct ProgressWidgetLiveActivity: Widget {
             .keylineTint(Color(uiColor: tintColor))
         }
 
-#if swift(>=6)
+//#if swift(>=6)
         if #available(iOS 18.0, *) {
             return config.supplementalActivityFamilies([.small])
         } else {
-#endif
+//#endif
             return config
-#if swift(>=6)
+//#if swift(>=6)
         }
-#endif
+//#endif
     }
 
 }
 
-#if swift(>=6)
+//#if swift(>=6)
 @available(iOS 18.0, *)
 struct ProgressWidgetLiveActivityWatchSupportContent: View {
     @Environment(\.activityFamily) var activityFamily
@@ -122,7 +122,7 @@ struct ProgressWidgetLiveActivityWatchSupportContent: View {
         }
     }
 }
-#endif
+//#endif
 
 struct ProgressWidgetLiveActivityContent: View {
     let context: ActivityViewContext<ProgressWidgetAttributes>

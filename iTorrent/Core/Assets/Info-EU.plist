@@ -5,6 +5,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.xitrix.itorrent.refresh</string>
+		<string>com.xitrix.itorrent.background</string>
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>
