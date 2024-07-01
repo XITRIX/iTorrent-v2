@@ -647,6 +647,12 @@
         }
       }
     },
+    "details.path" : {
+
+    },
+    "details.path.browse" : {
+
+    },
     "details.pause" : {
       "localizations" : {
         "en" : {

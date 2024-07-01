@@ -69,6 +69,8 @@ class TorrentDetailsViewModel: BaseViewModelWith<TorrentHandle> {
         }
     }
 
+    private lazy var dataPickerDelegate = DataPickerDelegate(parent: self)
+
     private let stateModel = DetailCellViewModel(title: %"details.state")
 
     private let downloadModel = DetailCellViewModel(title: %"details.speed.download")
@@ -92,6 +94,20 @@ class TorrentDetailsViewModel: BaseViewModelWith<TorrentHandle> {
     private let uploadedModel = DetailCellViewModel(title: %"details.transfer.uploaded")
     private let seedersModel = DetailCellViewModel(title: %"details.transfer.seeders")
     private let leechersModel = DetailCellViewModel(title: %"details.transfer.leechers")
+
+    private lazy var downloadPathModel = PRButtonViewModel(with: .init(title: %"details.path.browse", value: Just("Default").eraseToAnyPublisher(), accessories: [
+        .popUpMenu(
+            .init(title: %"preferences.appearance.theme.action", children: [
+                UIAction(title: "Default", state: .off) { _ in },
+                UIAction(title: "Browse", state: .off) { [unowned self] _ in
+                    let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder])
+                    documentPicker.delegate = dataPickerDelegate
+                    documentPicker.directoryURL = TorrentService.downloadPath
+                    navigationService?()?.present(documentPicker, animated: true)
+                },
+            ]), options: .init(tintColor: .tintColor)
+        ),
+    ]))
 
     private lazy var trackersModel = DetailCellViewModel(title: %"details.actions.trackers") { [unowned self] in
         navigate(to: TorrentTrackersViewModel.self, with: torrentHandle, by: .show)
@@ -253,10 +269,20 @@ private extension TorrentDetailsViewModel {
             leechersModel
         })
 
+        sections.append(.init(id: "path", header: %"details.path") {
+            downloadPathModel
+        })
+
         sections.append(.init(id: "actions", header: %"details.actions") {
             trackersModel
             filesModel
         })
+    }
+}
+
+private extension TorrentDetailsViewModel {
+    class DataPickerDelegate: DelegateObject<TorrentDetailsViewModel>, UIDocumentPickerDelegate {
+
     }
 }
 
