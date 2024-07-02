@@ -60,7 +60,9 @@ private extension PreferencesViewModel {
 
         sections.append(.init(id: "memory", header: %"preferences.storage") {
             storageVM
-            PRSwitchViewModel(with: .init(title: %"preferences.storage.allocate", value: preferences.$allocateMemory.binding))
+            PRButtonViewModel(with: .init(title: %"preferences", accessories: [.disclosureIndicator()]) { [unowned self] in
+                navigate(to: StoragePreferencesViewModel.self, by: .show)
+            })
         })
 
 #if IS_SUPPORT_LOCATION_BG

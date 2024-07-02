@@ -317,14 +317,7 @@ extension TorrentListViewController {
                     return
                 }
 
-                guard !TorrentService.shared.checkTorrentExists(with: torrentFile.infoHashes) else {
-                    let alert = UIAlertController(title: %"addTorrent.exists", message: %"addTorrent.\(torrentFile.infoHashes.best.hex)_exists", preferredStyle: .alert)
-                    alert.addAction(.init(title: %"common.close", style: .cancel))
-                    present(alert, animated: true)
-                    return
-                }
-
-                TorrentService.shared.addTorrent(by: torrentFile)
+                TorrentAddViewModel.present(with: torrentFile, from: self)
             }
         })
         return alert

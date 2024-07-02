@@ -11,6 +11,7 @@ import UIKit
 class TorrentAddViewController<VM: TorrentAddViewModel>: BaseViewController<VM> {
     @IBOutlet private var collectionView: UICollectionView!
     private lazy var delegates = Deletates(parent: self)
+    private lazy var dataPickerDelegate = DataPickerDelegate(parent: self)
     private let cancelButton = UIBarButtonItem(systemItem: .close)
     private let downloadButton = UIModernBarButtonItem(image: .init(systemName: "arrow.down"))
     private let diskLabel = makeDiskLabel()
@@ -20,9 +21,20 @@ class TorrentAddViewController<VM: TorrentAddViewModel>: BaseViewController<VM> 
         super.viewDidLoad()
         title = viewModel.title
 
-        moreButton.menu = .makeForChangePriority { [unowned self] priority in
-            viewModel.setAllFilesPriority(priority)
-        }
+        moreButton.menu = UIMenu(children: [
+            UIMenu.makeForChangePriority { [unowned self] priority in
+                viewModel.setAllFilesPriority(priority)
+            },
+            UIMenu(title: %"Путь скачивания", image: .init(systemName: "externaldrive"), children: [
+                UIAction(title: "Default", state: .on) { _ in },
+                UIAction(title: "Browse", state: .off) { [unowned self] _ in
+                    let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder])
+                    documentPicker.delegate = dataPickerDelegate
+                    documentPicker.directoryURL = TorrentService.downloadPath
+                    present(documentPicker, animated: true)
+                },
+            ])
+        ])
 
         collectionView.register(TorrentFilesDictionaryItemViewCell<TorrentAddDirectoryItemViewModel>.self, forCellWithReuseIdentifier: TorrentFilesDictionaryItemViewCell<TorrentAddDirectoryItemViewModel>.reusableId)
         collectionView.register(type: TorrentFilesFileListCell<TorrentAddFileItemViewModel>.self, hasXib: false)
@@ -126,6 +138,14 @@ private extension TorrentAddViewController {
                 parent.viewModel.dismiss()
             }))
             parent.navigationController?.present(alert, animated: true)
+        }
+    }
+}
+
+private extension TorrentAddViewController {
+    class DataPickerDelegate: DelegateObject<TorrentAddViewController>, UIDocumentPickerDelegate {
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            print(urls)
         }
     }
 }

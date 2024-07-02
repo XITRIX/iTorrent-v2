@@ -43,30 +43,21 @@ class TorrentService {
 }
 
 extension TorrentService {
+    var storages: Dictionary<UUID, StorageModel> {
+        get { session.storages }
+        set { session.storages = newValue }
+    }
+
     func checkTorrentExists(with hash: TorrentHashes) -> Bool {
         torrents.contains(where: { $0.snapshot.infoHashes == hash })
     }
 
     @discardableResult
-    func addTorrent(by file: Downloadable) -> Bool {
+    func addTorrent(by file: Downloadable, at savePath: String? = nil) -> Bool {
         guard !torrents.contains(where: { file.infoHashes == $0.snapshot.infoHashes })
         else { return false }
 
-        session.addTorrent(file)
-        return true
-    }
-
-    @discardableResult
-    func addTorrent(by path: URL) -> Bool {
-        defer { path.stopAccessingSecurityScopedResource() }
-        guard path.startAccessingSecurityScopedResource(),
-              let file = TorrentFile(with: path)
-        else { return false }
-
-        guard !torrents.contains(where: { file.infoHashes == $0.snapshot.infoHashes })
-        else { return false }
-
-        session.addTorrent(file)
+        session.addTorrent(file, to: savePath)
         return true
     }
 
@@ -127,6 +118,23 @@ private extension TorrentService {
         session.resume();
         session.add(self)
 
+        // Resolve sequrity scopes
+        preferences.storageScopes.values.forEach { scope in
+            do {
+                var isStale = false
+                let url = try URL(resolvingBookmarkData: scope.pathBookmark, bookmarkDataIsStale: &isStale)
+
+                scope.resolvedURL = url
+
+                if isStale {
+                    let newBookmark = try url.bookmarkData()
+                    scope.pathBookmark = newBookmark
+                }
+            } catch {
+                print(error)
+            }
+        }
+
         disposeBag.bind {
             Publishers.combineLatest(
                 preferences.settingsUpdatePublisher,
@@ -138,6 +146,10 @@ private extension TorrentService {
                 DispatchQueue.main.async { [self] in // Need delay to complete settings apply
                     session.settings = Session.Settings.fromPreferences(with: interfaces)
                 }
+            }
+
+            preferences.$storageScopes.sink { [unowned self] storages in
+                session.storages = storages
             }
         }
     }

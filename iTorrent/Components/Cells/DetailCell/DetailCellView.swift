@@ -17,7 +17,7 @@ struct DetailCellView: MvvmSwiftUICellProtocol {
         if isHorizontal {
             HStack {
                 Text(viewModel.title)
-                    .fontWeight(.semibold)
+                    .fontWeight(viewModel.isBold ? .semibold : .regular)
                 Spacer(minLength: viewModel.spacer)
                 Text(LocalizedStringKey(viewModel.detail))
                     .foregroundStyle(Color.accentColor)

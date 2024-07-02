@@ -13,6 +13,7 @@ extension PRButtonViewModel {
     struct Config {
         var id: String?
         var title: String
+        var tintedTitle: Bool = false
         var value: AnyPublisher<String, Never>?// = Just("").eraseToAnyPublisher()
         var canReorder: Bool = false
         var tinted: Bool = true
@@ -27,17 +28,20 @@ class PRButtonViewModel: BaseViewModelWith<PRButtonViewModel.Config>, Observable
 
     var id: String?
     @Published var title = ""
+    @Published var tintedTitle: Bool = false
     @Published var value: String = ""
     @Published var tinted: Bool = true
     @Published var singleLine: Bool = false
     @Published var canReorder: Bool = false
     @Published var accessories: [UICellAccessory] = []
+    @Published var removeAction: (() -> Void)?
 
     var metadata: Any?
 
     override func prepare(with model: Config) {
         id = model.id
         title = model.title
+        tintedTitle = model.tintedTitle
         if let value = model.value {
             value.assign(to: &self.$value)
         }

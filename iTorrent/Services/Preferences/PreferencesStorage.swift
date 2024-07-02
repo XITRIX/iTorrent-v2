@@ -33,6 +33,8 @@ class PreferencesStorage: Resolvable {
         .paused
     ]
 
+    @UserDefaultItem("torrentStorageScopes", [:]) var storageScopes: [UUID: StorageModel]
+
     @UserDefaultItem("torrentListSortType", .alphabetically) var torrentListSortType: TorrentListViewModel.Sort
     @UserDefaultItem("torrentListSortReverced", false) var torrentListSortReverced: Bool
     @UserDefaultItem("torrentListIsGroubedByState", false) var torrentListGroupedByState: Bool
@@ -99,7 +101,6 @@ class PreferencesStorage: Resolvable {
 
     var settingsUpdatePublisher: AnyPublisher<Void, Never> {
         Just<Void>(())
-            .combineLatest($allocateMemory)
             .combineLatest($maxActiveTorrents)
             .combineLatest($maxDownloadingTorrents)
             .combineLatest($maxUploadingTorrents)

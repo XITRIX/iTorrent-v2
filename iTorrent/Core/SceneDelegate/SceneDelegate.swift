@@ -62,6 +62,7 @@ class SceneDelegate: MvvmSceneDelegate {
         router.register(BasePreferencesViewController<ProxyPreferencesViewModel>.self)
         router.register(BasePreferencesViewController<ConnectionPreferencesViewModel>.self)
         router.register(BasePreferencesViewController<FileSharingPreferencesViewModel>.self)
+        router.register(BasePreferencesViewController<StoragePreferencesViewModel>.self)
         router.register(PreferencesSectionGroupingViewController.self)
         router.register(PatreonPreferencesViewController.self)
 
