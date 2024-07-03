@@ -14,13 +14,22 @@ class StoragePreferencesViewModel: BasePreferencesViewModel {
     required init() {
         super.init()
         binding()
-        reload()
+        reload(storageScopes: preferences.storageScopes)
     }
 
     private let storagesLimit: Int = 4
 
     private lazy var dataPickerDelegate = DataPickerDelegate(parent: self)
     @Injected private var preferences: PreferencesStorage
+
+    private lazy var defaultStorageVM = {
+        PRButtonViewModel(with: .init(title: "iTorrent Default", accessories: preferences.defaultStorage == nil ? [.checkmark()] : []) { [unowned self] in
+            preferences.defaultStorage = nil
+            dismissSelection.send()
+        })
+    }()
+
+    private lazy var customStoragesVM: [UUID: PRButtonViewModel] = [:]
 
     private lazy var documentPicker: UIDocumentPickerViewController = {
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder])
@@ -34,14 +43,38 @@ private extension StoragePreferencesViewModel {
     func binding() {
         disposeBag.bind {
             preferences.$storageScopes
-                .receive(on: .main)
-                .sink { [unowned self] _ in
-                reload()
+                .sink { [unowned self] storageScopes in
+                customStoragesVM = [:]
+                storageScopes.forEach { scope in
+                    let vm = PRButtonViewModel(with: .init(removeAction: { [unowned self] in
+                        preferences.storageScopes[scope.key] = nil
+                        if preferences.defaultStorage == scope.key {
+                            preferences.defaultStorage = nil
+                        }
+                    }, title: scope.value.name, accessories: preferences.defaultStorage == scope.key ? [.checkmark()] : []) { [unowned self] in
+                        preferences.defaultStorage = scope.key
+                        dismissSelection.send()
+                    })
+                    customStoragesVM[scope.key] = vm
+                }
+
+                    reload(storageScopes: storageScopes)
+            }
+
+            preferences.$defaultStorage.sink { [unowned self] uuid in
+                defaultStorageVM.accessories = []
+                customStoragesVM.forEach { $0.value.accessories = [] }
+
+                guard let uuid, let customVM = customStoragesVM[uuid] else {
+                    return defaultStorageVM.accessories = [.checkmark()]
+                }
+
+                customVM.accessories = [.checkmark()]
             }
         }
     }
 
-    func reload() {
+    func reload(storageScopes: [UUID : StorageModel]) {
         title.send(%"preferences.storage")
 
         var sections: [MvvmCollectionSectionModel] = []
@@ -51,18 +84,13 @@ private extension StoragePreferencesViewModel {
             PRSwitchViewModel(with: .init(title: %"preferences.storage.allocate", value: preferences.$allocateMemory.binding))
         })
 
-        sections.append(.init(id: "storages", header: "Storages", footer: "Available: 1/5") {
-            PRButtonViewModel(with: .init(title: "iTorrent Default", accessories: [.checkmark()]) { [unowned self] in
-                dismissSelection.send()
-            })
+        let footer = preferences.$storageScopes.map { [unowned self] in "Available: \($0.count + 1)/\(storagesLimit + 1)" }.eraseToAnyPublisher()
+        sections.append(.init(id: "storages", header: .init("Storages"), footer: footer) {
+            defaultStorageVM
 
-            preferences.storageScopes.sorted(by: { $0.value.name < $1.value.name }).map { scope in
-                PRButtonViewModel(with: .init(title: scope.value.name, accessories: []) { [unowned self] in
-                    dismissSelection.send()
-                })
-            }
+            customStoragesVM.values.sorted(by: { $0.title.localizedStandardCompare($1.title) == .orderedAscending })
 
-            if preferences.storageScopes.count < storagesLimit {
+            if storageScopes.count < storagesLimit {
                 PRButtonViewModel(with: .init(title: "Add more...", tintedTitle: true) { [unowned self] in
                     dismissSelection.send()
                     navigationService?()?.present(documentPicker, animated: true)
@@ -77,16 +105,27 @@ private extension StoragePreferencesViewModel {
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             guard let url = urls.first,
                   let bookmark = try? url.bookmarkData(),
-                  !parent.preferences.storageScopes.values.contains(where: { $0.resolvedURL == url })
+                  !parent.preferences.storageScopes.values.contains(where: {
+                      $0.resolvedURL == url || $0.resolvedURL == TorrentService.downloadPath
+                  })
             else { return }
 
             print(url)
 
             let storage = StorageModel()
+            storage.uuid = UUID()
             storage.name = url.lastPathComponent
+
+            do {
+                let name = try url.resourceValues(forKeys: [.localizedNameKey])
+                if let name = name.allValues[.localizedNameKey] as? String {
+                    storage.name = name
+                }
+            } catch { }
+
             storage.pathBookmark = bookmark
             storage.resolvedURL = url
-            parent.preferences.storageScopes[UUID()] = .init()
+            parent.preferences.storageScopes[storage.uuid] = storage
         }
     }
 }

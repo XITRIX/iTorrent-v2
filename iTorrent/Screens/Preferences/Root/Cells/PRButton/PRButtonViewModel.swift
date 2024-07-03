@@ -12,6 +12,7 @@ import SwiftUI
 extension PRButtonViewModel {
     struct Config {
         var id: String?
+        var removeAction: (() -> Void)? = nil
         var title: String
         var tintedTitle: Bool = false
         var value: AnyPublisher<String, Never>?// = Just("").eraseToAnyPublisher()
@@ -50,15 +51,17 @@ class PRButtonViewModel: BaseViewModelWith<PRButtonViewModel.Config>, Observable
         canReorder = model.canReorder
         tinted = model.tinted
         singleLine = model.singleLine
+        removeAction = model.removeAction
     }
 
     override func isEqual(to other: MvvmViewModel) -> Bool {
         guard let other = other as? Self else { return false }
-        return id == other.id && title == other.title
+        return id == other.id && title == other.title && accessories.count == other.accessories.count
     }
 
     override func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(title)
+        hasher.combine(accessories.count)
     }
 }

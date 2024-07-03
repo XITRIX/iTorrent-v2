@@ -23,11 +23,13 @@ struct PRButtonView: MvvmSwiftUICellProtocol {
         }
         .systemMinimumHeight()
         .swipeActions {
-//            Button(role: .destructive) {
-////                viewModel.removeTorrent()
-//            } label: {
-//                Image(systemName: "trash")
-//            }
+            if let removeAction = viewModel.removeAction {
+                Button(role: .destructive) {
+                    removeAction()
+                } label: {
+                    Image(systemName: "trash")
+                }
+            }
         }
     }
 

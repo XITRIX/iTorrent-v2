@@ -18,6 +18,9 @@ class PreferencesStorage: Resolvable {
         // Location mode is not allowed by Apple policy
         backgroundMode = .audio
         #endif
+
+        // Sanity check for defaultStorage if something went wrong
+        if defaultStorage != nil, !storageScopes.contains(where: { $0.key == defaultStorage }) { defaultStorage = nil }
     }
 
     private var disposeBag: [AnyCancellable] = []
@@ -33,6 +36,7 @@ class PreferencesStorage: Resolvable {
         .paused
     ]
 
+    @UserDefaultItem("torrentDefaultStorage", nil) var defaultStorage: UUID?
     @UserDefaultItem("torrentStorageScopes", [:]) var storageScopes: [UUID: StorageModel]
 
     @UserDefaultItem("torrentListSortType", .alphabetically) var torrentListSortType: TorrentListViewModel.Sort
