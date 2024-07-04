@@ -96,8 +96,12 @@ struct SUIStoragePreferencesView<VM: SUIStoragePreferencesViewModel>: MvvmSwiftU
                 }
             }
         }.fileImporter(isPresented: $filePickerPresented, allowedContentTypes: [.folder]) { result in
-            guard let url = try? result.get(),
-                  let bookmark = try? url.bookmarkData(),
+            guard let url = try? result.get() else { return }
+
+            let allowed = url.startAccessingSecurityScopedResource()
+            print("Path - \(url) | write permissions - \(allowed)")
+
+            guard let bookmark = try? url.bookmarkData(options: [.minimalBookmark]),
                   !viewModel.preferences.storageScopes.values.contains(where: {
                       $0.resolvedURL == url || $0.resolvedURL == TorrentService.downloadPath
                   })

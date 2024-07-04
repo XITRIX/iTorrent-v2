@@ -86,6 +86,7 @@ class TorrentDetailsViewModel: BaseViewModelWith<TorrentHandle> {
     private let commentModel = DetailCellViewModel(title: %"details.info.comment", spacer: 80)
     private let createdModel = DetailCellViewModel(title: %"details.info.created")
     private let addedModel = DetailCellViewModel(title: %"details.info.added")
+    private let downloadPath2Model = DetailCellViewModel(title: "Download Path")
 
     private let selectedModel = DetailCellViewModel(title: %"details.transfer.selectedTotal")
     private let completedModel = DetailCellViewModel(title: %"details.transfer.completed")
@@ -207,6 +208,8 @@ private extension TorrentDetailsViewModel {
         uploadedModel.detail = "\(torrentHandle.snapshot.totalUpload.bitrateToHumanReadable)"
         seedersModel.detail = "\(torrentHandle.snapshot.numberOfSeeds)(\(torrentHandle.snapshot.numberOfTotalSeeds))"
         leechersModel.detail = "\(torrentHandle.snapshot.numberOfLeechers)(\(torrentHandle.snapshot.numberOfTotalLeechers))"
+
+        downloadPath2Model.detail = torrentHandle.snapshot.downloadPath ?? "None"
     }
 
     func reload() {
@@ -270,6 +273,7 @@ private extension TorrentDetailsViewModel {
         })
 
         sections.append(.init(id: "path", header: %"details.path") {
+            downloadPath2Model
             downloadPathModel
         })
 

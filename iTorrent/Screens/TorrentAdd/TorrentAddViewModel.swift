@@ -24,11 +24,15 @@ class TorrentAddViewModel: BaseViewModelWith<TorrentAddViewModel.Config> {
     private(set) var isRoot: Bool = false
 
     let updatePublisher = CurrentValueRelay<Void>(())
+    let downloadStorage = CurrentValueRelay<UUID?>(nil)
+    let downloadStorages = CurrentValueRelay<[StorageModel]>([])
 
     override func prepare(with model: Config) {
         torrentFile = model.torrentFile
         isRoot = model.rootDirectory == nil
         rootDirectory = model.rootDirectory ?? generateRoot()
+        downloadStorage.value = preferences.defaultStorage
+
         keys = rootDirectory.storage
             .sorted(by: { first, second in
                 let f = first.value.name
@@ -49,6 +53,8 @@ class TorrentAddViewModel: BaseViewModelWith<TorrentAddViewModel.Config> {
     override func willAppear() {
         updatePublisher.send()
     }
+
+    @Injected private var preferences: PreferencesStorage
 }
 
 extension TorrentAddViewModel {
@@ -91,7 +97,7 @@ extension TorrentAddViewModel {
     }
 
     func download() {
-        TorrentService.shared.addTorrent(by: torrentFile)
+        TorrentService.shared.addTorrent(by: torrentFile, at: downloadStorage.value)
         dismiss()
     }
 
@@ -112,6 +118,12 @@ extension TorrentAddViewModel {
             }
             return "\(selected.bitrateToHumanReadable) / \(total.bitrateToHumanReadable)"
         }.eraseToAnyPublisher()
+    }
+
+    var storages: [(name: String, selected: Bool, uuid: UUID?)] {
+        [("iTorrent Default", downloadStorage.value == nil, nil)] +
+        preferences.storageScopes.values.sorted(by: { $0.name.localizedStandardCompare($1.name) == .orderedAscending })
+            .map { ($0.name, downloadStorage.value == $0.uuid, $0.uuid ) }
     }
 }
 

@@ -52,7 +52,7 @@ class SceneDelegate: MvvmSceneDelegate {
         router.register(PRColorPickerCell.self)
 
         // MARK: Controllers
-        router.register(SUIStoragePreferencesView.self)
+        router.register(BaseHostingViewController<SUIStoragePreferencesView>.self)
 
         router.register(TorrentListViewController<TorrentListViewModel>.self)
         router.register(TorrentDetailsViewController<TorrentDetailsViewModel>.self)

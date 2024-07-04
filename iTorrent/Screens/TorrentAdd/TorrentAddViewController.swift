@@ -21,20 +21,7 @@ class TorrentAddViewController<VM: TorrentAddViewModel>: BaseViewController<VM> 
         super.viewDidLoad()
         title = viewModel.title
 
-        moreButton.menu = UIMenu(children: [
-            UIMenu.makeForChangePriority { [unowned self] priority in
-                viewModel.setAllFilesPriority(priority)
-            },
-            UIMenu(title: %"Путь скачивания", image: .init(systemName: "externaldrive"), children: [
-                UIAction(title: "Default", state: .on) { _ in },
-                UIAction(title: "Browse", state: .off) { [unowned self] _ in
-                    let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder])
-                    documentPicker.delegate = dataPickerDelegate
-                    documentPicker.directoryURL = TorrentService.downloadPath
-                    present(documentPicker, animated: true)
-                },
-            ])
-        ])
+        updateMenu()
 
         collectionView.register(TorrentFilesDictionaryItemViewCell<TorrentAddDirectoryItemViewModel>.self, forCellWithReuseIdentifier: TorrentFilesDictionaryItemViewCell<TorrentAddDirectoryItemViewModel>.reusableId)
         collectionView.register(type: TorrentFilesFileListCell<TorrentAddFileItemViewModel>.self, hasXib: false)
@@ -86,6 +73,22 @@ private extension TorrentAddViewController {
         label.textColor = .secondaryLabel
         label.font = .preferredFont(forTextStyle: .callout)
         return label
+    }
+
+    func updateMenu() {
+        moreButton.menu = UIMenu(children: [
+            UIMenu.makeForChangePriority { [unowned self] priority in
+                viewModel.setAllFilesPriority(priority)
+            },
+            UIMenu(title: %"Путь скачивания",
+                   image: .init(systemName: "externaldrive"),
+                   children: viewModel.storages.map { storage in
+                       UIAction(title: storage.name, state: storage.selected ? .on : .off) { [unowned self] _ in
+                           viewModel.downloadStorage.value = storage.uuid
+                           updateMenu()
+                       }
+                   })
+        ])
     }
 }
 

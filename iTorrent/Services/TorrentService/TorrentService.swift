@@ -8,6 +8,7 @@
 import Combine
 import LibTorrent
 import MvvmFoundation
+import UIKit
 
 extension TorrentService {
     struct TorrentUpdateModel {
@@ -53,11 +54,11 @@ extension TorrentService {
     }
 
     @discardableResult
-    func addTorrent(by file: Downloadable, at savePath: String? = nil) -> Bool {
+    func addTorrent(by file: Downloadable, at storage: UUID? = nil) -> Bool {
         guard !torrents.contains(where: { file.infoHashes == $0.snapshot.infoHashes })
         else { return false }
 
-        session.addTorrent(file, to: savePath)
+        session.addTorrent(file, to: storage)
         return true
     }
 
@@ -119,19 +120,25 @@ private extension TorrentService {
         session.add(self)
 
         // Resolve sequrity scopes
-        preferences.storageScopes.values.forEach { scope in
-            do {
-                var isStale = false
-                let url = try URL(resolvingBookmarkData: scope.pathBookmark, bookmarkDataIsStale: &isStale)
+        Task {
+            try await Task.sleep(nanoseconds: 100_000)
+            preferences.storageScopes.values.forEach { scope in
+                do {
+                    var isStale = false
+                    let url = try URL(resolvingBookmarkData: scope.pathBookmark, bookmarkDataIsStale: &isStale)
 
-                scope.resolvedURL = url
+                    scope.resolvedURL = url
 
-                if isStale {
-                    let newBookmark = try url.bookmarkData()
-                    scope.pathBookmark = newBookmark
+                    if isStale {
+                        let allowed = url.startAccessingSecurityScopedResource()
+                        print("Path - \(url) | write permissions - \(allowed)")
+
+                        let newBookmark = try url.bookmarkData(options: [.minimalBookmark])
+                        scope.pathBookmark = newBookmark
+                    }
+                } catch {
+                    print(error)
                 }
-            } catch {
-                print(error)
             }
         }
 
