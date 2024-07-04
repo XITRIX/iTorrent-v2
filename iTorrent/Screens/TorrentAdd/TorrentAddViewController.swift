@@ -80,7 +80,7 @@ private extension TorrentAddViewController {
             UIMenu.makeForChangePriority { [unowned self] priority in
                 viewModel.setAllFilesPriority(priority)
             },
-            UIMenu(title: %"Путь скачивания",
+            UIMenu(title: %"addTorrent.storage.selected",
                    image: .init(systemName: "externaldrive"),
                    children: viewModel.storages.map { storage in
                        UIAction(title: storage.name, state: storage.selected ? .on : .off) { [unowned self] _ in

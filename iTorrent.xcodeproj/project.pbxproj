@@ -51,11 +51,7 @@
 		7C5FBE702BC2EF8B0069E5A0 /* EditTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5FBE6D2BC2EF8B0069E5A0 /* EditTextViewController.swift */; };
 		7C5FBE742BC2F0A30069E5A0 /* MvvmViewModelProtocol+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5FBE732BC2F0A30069E5A0 /* MvvmViewModelProtocol+Alert.swift */; };
 		7C609A5B2C1F5D9E00586635 /* SceneDelegate+AVPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C609A5A2C1F5D9E00586635 /* SceneDelegate+AVPlayer.swift */; };
-		7C95B7A52C34B568000EC50F /* StoragePreferencesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95B7A42C34B562000EC50F /* StoragePreferencesViewModel.swift */; };
-		7C95B7AA2C34B98C000EC50F /* DetailedHeaderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7C95B7A92C34B98C000EC50F /* DetailedHeaderCell.xib */; };
-		7C95B7AB2C34B98C000EC50F /* DetailedHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95B7A82C34B98C000EC50F /* DetailedHeaderCell.swift */; };
-		7C95B7AD2C34B9B7000EC50F /* DetailedHeaderCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95B7AC2C34B9B4000EC50F /* DetailedHeaderCellViewModel.swift */; };
-		7C95B7B42C35DE5C000EC50F /* SUIStoragePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95B7B32C35DE49000EC50F /* SUIStoragePreferencesViewController.swift */; };
+		7C95B7B42C35DE5C000EC50F /* StoragePreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95B7B32C35DE49000EC50F /* StoragePreferencesView.swift */; };
 		7CAD30192BC3455800592990 /* SWXMLHash in Frameworks */ = {isa = PBXBuildFile; productRef = 7CAD30182BC3455800592990 /* SWXMLHash */; };
 		7CAD301C2BC3457900592990 /* RssModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAD301B2BC3457900592990 /* RssModel.swift */; };
 		7CAD301E2BC347D900592990 /* Published+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAD301D2BC347D900592990 /* Published+Codable.swift */; };
@@ -292,11 +288,7 @@
 		7C609A572C1F1D6400586635 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7C609A592C1F2A2700586635 /* iTorrent.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iTorrent.xcconfig; sourceTree = "<group>"; };
 		7C609A5A2C1F5D9E00586635 /* SceneDelegate+AVPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneDelegate+AVPlayer.swift"; sourceTree = "<group>"; };
-		7C95B7A42C34B562000EC50F /* StoragePreferencesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoragePreferencesViewModel.swift; sourceTree = "<group>"; };
-		7C95B7A82C34B98C000EC50F /* DetailedHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedHeaderCell.swift; sourceTree = "<group>"; };
-		7C95B7A92C34B98C000EC50F /* DetailedHeaderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailedHeaderCell.xib; sourceTree = "<group>"; };
-		7C95B7AC2C34B9B4000EC50F /* DetailedHeaderCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedHeaderCellViewModel.swift; sourceTree = "<group>"; };
-		7C95B7B32C35DE49000EC50F /* SUIStoragePreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SUIStoragePreferencesViewController.swift; sourceTree = "<group>"; };
+		7C95B7B32C35DE49000EC50F /* StoragePreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoragePreferencesView.swift; sourceTree = "<group>"; };
 		7CAD301B2BC3457900592990 /* RssModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RssModel.swift; sourceTree = "<group>"; };
 		7CAD301D2BC347D900592990 /* Published+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Published+Codable.swift"; sourceTree = "<group>"; };
 		7CAD301F2BC34BCE00592990 /* RssFeedProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RssFeedProvider.swift; sourceTree = "<group>"; };
@@ -610,29 +602,9 @@
 		7C95B7A32C34B554000EC50F /* Storage */ = {
 			isa = PBXGroup;
 			children = (
-				7C95B7B32C35DE49000EC50F /* SUIStoragePreferencesViewController.swift */,
-				7C95B7A62C34B960000EC50F /* Cells */,
-				7C95B7A42C34B562000EC50F /* StoragePreferencesViewModel.swift */,
+				7C95B7B32C35DE49000EC50F /* StoragePreferencesView.swift */,
 			);
 			path = Storage;
-			sourceTree = "<group>";
-		};
-		7C95B7A62C34B960000EC50F /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				7C95B7A72C34B965000EC50F /* DetailedHeaderCell */,
-			);
-			path = Cells;
-			sourceTree = "<group>";
-		};
-		7C95B7A72C34B965000EC50F /* DetailedHeaderCell */ = {
-			isa = PBXGroup;
-			children = (
-				7C95B7AC2C34B9B4000EC50F /* DetailedHeaderCellViewModel.swift */,
-				7C95B7A82C34B98C000EC50F /* DetailedHeaderCell.swift */,
-				7C95B7A92C34B98C000EC50F /* DetailedHeaderCell.xib */,
-			);
-			path = DetailedHeaderCell;
 			sourceTree = "<group>";
 		};
 		7CAD301A2BC3456700592990 /* RssFeed */ = {
@@ -1473,7 +1445,6 @@
 				D1EFCD0A2AF56A4C00D33A7A /* TorrentFilesViewController.xib in Resources */,
 				D1352D332BBD720C00104E7B /* PRStorageCell.xib in Resources */,
 				D173D9E82BC033CF00E4F9EB /* 3.wav in Resources */,
-				7C95B7AA2C34B98C000EC50F /* DetailedHeaderCell.xib in Resources */,
 				7C5FBE2E2BBF3FF80069E5A0 /* PRSwitchView.xib in Resources */,
 				7CC411582BD2DCF800CA8B13 /* GoogleService-Info.plist in Resources */,
 				D1AA00D02AFAC7D200B74629 /* Localizable.xcstrings in Resources */,
@@ -1545,7 +1516,6 @@
 				D11333B52AF19C4900FA017E /* TorrentHandle+Extension.swift in Sources */,
 				D19E00202AEFFA1B000A17A2 /* DetailCellView.swift in Sources */,
 				D1ACFDC62AF6DB9F0098FF56 /* TorrentFilesFileListCell.swift in Sources */,
-				7C95B7AB2C34B98C000EC50F /* DetailedHeaderCell.swift in Sources */,
 				D1A227072AEF0B2C00669D6D /* TorrentListItem.swift in Sources */,
 				D111384B2AF965F1008907F7 /* TorrentAddViewModel.swift in Sources */,
 				D1A226A22AEEEFCC00669D6D /* ViewController.swift in Sources */,
@@ -1569,7 +1539,7 @@
 				7C5FBE642BC158BC0069E5A0 /* SceneDelegate+URLProcessing.swift in Sources */,
 				D1A2269E2AEEEFCC00669D6D /* AppDelegate.swift in Sources */,
 				7C5FBE702BC2EF8B0069E5A0 /* EditTextViewController.swift in Sources */,
-				7C95B7B42C35DE5C000EC50F /* SUIStoragePreferencesViewController.swift in Sources */,
+				7C95B7B42C35DE5C000EC50F /* StoragePreferencesView.swift in Sources */,
 				7CFEBEA02BC6F3CD0013233F /* Date+Extensions.swift in Sources */,
 				D1DB718B2BD91606007F9267 /* ImageCache.swift in Sources */,
 				7CBDBAAD2C31EF0C008C986B /* UserDefaults+AppGroup.swift in Sources */,
@@ -1624,7 +1594,6 @@
 				D1B538592AF1172000694AFD /* TorrentDetailProgressCellViewModel.swift in Sources */,
 				7C4ED0892BE6423D0034B62C /* MetaAdsManager.swift in Sources */,
 				7CFEBEAD2BC88F4C0013233F /* AppDelegate+BackgroundRefresh.swift in Sources */,
-				7C95B7AD2C34B9B7000EC50F /* DetailedHeaderCellViewModel.swift in Sources */,
 				D1DB71912BD92238007F9267 /* PatreonPreferencesViewController.swift in Sources */,
 				D135C5992AEFB96100440680 /* TorrentDetailsViewController.swift in Sources */,
 				D1048D8B2BBEB6DE0027EF2F /* CombineLatest.swift in Sources */,
@@ -1676,7 +1645,6 @@
 				D11138522AF9665B008907F7 /* PreferencesViewModel.swift in Sources */,
 				D1DB71802BD6773E007F9267 /* RssSearchViewModel.swift in Sources */,
 				D17733EE2BBC2C5F006FC81A /* ProxyPreferencesViewModel.swift in Sources */,
-				7C95B7A52C34B568000EC50F /* StoragePreferencesViewModel.swift in Sources */,
 				7CF6DA3E2C0F9DC40033D03F /* LiveActivityService.swift in Sources */,
 				7C4ED0982BEF8B8E0034B62C /* PatreonCredentials.swift in Sources */,
 				D173D9E12BC0286800E4F9EB /* UIMenu+Priority.swift in Sources */,

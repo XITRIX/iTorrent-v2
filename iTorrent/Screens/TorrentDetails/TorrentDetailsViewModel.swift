@@ -69,8 +69,6 @@ class TorrentDetailsViewModel: BaseViewModelWith<TorrentHandle> {
         }
     }
 
-    private lazy var dataPickerDelegate = DataPickerDelegate(parent: self)
-
     private let stateModel = DetailCellViewModel(title: %"details.state")
 
     private let downloadModel = DetailCellViewModel(title: %"details.speed.download")
@@ -100,12 +98,7 @@ class TorrentDetailsViewModel: BaseViewModelWith<TorrentHandle> {
         .popUpMenu(
             .init(title: %"preferences.appearance.theme.action", children: [
                 UIAction(title: "Default", state: .off) { _ in },
-                UIAction(title: "Browse", state: .off) { [unowned self] _ in
-                    let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder])
-                    documentPicker.delegate = dataPickerDelegate
-                    documentPicker.directoryURL = TorrentService.downloadPath
-                    navigationService?()?.present(documentPicker, animated: true)
-                },
+                UIAction(title: "Browse", state: .off) { _ in },
             ]), options: .init(tintColor: .tintColor)
         ),
     ]))
@@ -209,7 +202,7 @@ private extension TorrentDetailsViewModel {
         seedersModel.detail = "\(torrentHandle.snapshot.numberOfSeeds)(\(torrentHandle.snapshot.numberOfTotalSeeds))"
         leechersModel.detail = "\(torrentHandle.snapshot.numberOfLeechers)(\(torrentHandle.snapshot.numberOfTotalLeechers))"
 
-        downloadPath2Model.detail = torrentHandle.snapshot.downloadPath ?? "None"
+        downloadPath2Model.detail = torrentHandle.snapshot.downloadPath.path()
     }
 
     func reload() {
@@ -273,7 +266,7 @@ private extension TorrentDetailsViewModel {
         })
 
         sections.append(.init(id: "path", header: %"details.path") {
-            downloadPath2Model
+//            downloadPath2Model
             downloadPathModel
         })
 
@@ -281,12 +274,6 @@ private extension TorrentDetailsViewModel {
             trackersModel
             filesModel
         })
-    }
-}
-
-private extension TorrentDetailsViewModel {
-    class DataPickerDelegate: DelegateObject<TorrentDetailsViewModel>, UIDocumentPickerDelegate {
-
     }
 }
 

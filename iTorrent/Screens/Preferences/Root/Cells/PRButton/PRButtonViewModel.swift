@@ -15,7 +15,7 @@ extension PRButtonViewModel {
         var removeAction: (() -> Void)? = nil
         var title: String
         var tintedTitle: Bool = false
-        var value: AnyPublisher<String, Never>?// = Just("").eraseToAnyPublisher()
+        var value: AnyPublisher<String, Never>?
         var canReorder: Bool = false
         var tinted: Bool = true
         var singleLine: Bool = false

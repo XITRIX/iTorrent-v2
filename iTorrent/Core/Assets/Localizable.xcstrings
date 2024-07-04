@@ -102,6 +102,22 @@
         }
       }
     },
+    "addTorrent.storage.selected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download path"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Путь скачивания"
+          }
+        }
+      }
+    },
     "common.add" : {
       "localizations" : {
         "en" : {
@@ -648,10 +664,36 @@
       }
     },
     "details.path" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Хранилище"
+          }
+        }
+      }
     },
     "details.path.browse" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текущее"
+          }
+        }
+      }
     },
     "details.pause" : {
       "localizations" : {
@@ -2981,6 +3023,22 @@
         }
       }
     },
+    "preferences.storage.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add more..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавить..."
+          }
+        }
+      }
+    },
     "preferences.storage.allocate" : {
       "localizations" : {
         "en" : {
@@ -3009,6 +3067,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Доступно"
+          }
+        }
+      }
+    },
+    "preferences.storage.storages" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storages"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Хранилища"
+          }
+        }
+      }
+    },
+    "preferences.storage.storages.available%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available: %1$lld/%2$lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступно: %1$lld/%2$lld"
           }
         }
       }
@@ -4116,9 +4206,6 @@
           }
         }
       }
-    },
-    "Путь скачивания" : {
-
     }
   },
   "version" : "1.0"

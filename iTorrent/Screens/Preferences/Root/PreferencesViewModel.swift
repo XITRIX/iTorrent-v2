@@ -61,8 +61,7 @@ private extension PreferencesViewModel {
         sections.append(.init(id: "memory", header: %"preferences.storage") {
             storageVM
             PRButtonViewModel(with: .init(title: %"preferences", accessories: [.disclosureIndicator()]) { [unowned self] in
-//                navigate(to: StoragePreferencesViewModel.self, by: .show)
-                navigate(to: SUIStoragePreferencesViewModel.self, by: .show)
+                navigate(to: StoragePreferencesViewModel.self, by: .show)
             })
 //            PRButtonViewModel(with: .init(title: "preferences2", accessories: [.disclosureIndicator()]) { [unowned self] in
 //                navigate(to: StoragePreferencesViewModel.self, by: .show)

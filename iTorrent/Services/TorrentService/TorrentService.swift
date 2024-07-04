@@ -31,10 +31,10 @@ class TorrentService {
     static var fastResumePath: URL { downloadPath.appending(path: "config") }
     static var metadataPath: URL { downloadPath.appending(path: "config") }
 
-    private let session: Session = {
+    private lazy var session: Session = {
         var settings = Session.Settings()
-        print("Working directory: \(downloadPath.path())")
-        return .init(downloadPath.path(), torrentsPath: torrentPath.path(), fastResumePath: fastResumePath.path(), settings: .fromPreferences(with: []))
+        print("Working directory: \(Self.downloadPath.path())")
+        return .init(Self.downloadPath.path(), torrentsPath: Self.torrentPath.path(), fastResumePath: Self.fastResumePath.path(), settings: .fromPreferences(with: []), storages: PreferencesStorage.shared.storageScopes)
     }()
 
     private let disposeBag = DisposeBag()
@@ -109,6 +109,9 @@ extension TorrentService: SessionDelegate {
 
 private extension TorrentService {
     func setup() {
+        // Resolve storage scopes, so Core will be able to restore states
+        resolveStorageScopes()
+
         // Pause the core, so it will not deadlock app on making first snapshots
         session.pause();
         torrents = session.torrents.map { torrent in
@@ -118,29 +121,6 @@ private extension TorrentService {
         // After initialization is done we could resume core
         session.resume();
         session.add(self)
-
-        // Resolve sequrity scopes
-        Task {
-            try await Task.sleep(nanoseconds: 100_000)
-            preferences.storageScopes.values.forEach { scope in
-                do {
-                    var isStale = false
-                    let url = try URL(resolvingBookmarkData: scope.pathBookmark, bookmarkDataIsStale: &isStale)
-
-                    scope.resolvedURL = url
-
-                    if isStale {
-                        let allowed = url.startAccessingSecurityScopedResource()
-                        print("Path - \(url) | write permissions - \(allowed)")
-
-                        let newBookmark = try url.bookmarkData(options: [.minimalBookmark])
-                        scope.pathBookmark = newBookmark
-                    }
-                } catch {
-                    print(error)
-                }
-            }
-        }
 
         disposeBag.bind {
             Publishers.combineLatest(
@@ -157,6 +137,38 @@ private extension TorrentService {
 
             preferences.$storageScopes.sink { [unowned self] storages in
                 session.storages = storages
+            }
+        }
+    }
+
+    func resolveStorageScopes() {
+        preferences.storageScopes.values.forEach { scope in
+            do {
+                var isStale = false
+                let url = try URL(resolvingBookmarkData: scope.pathBookmark, bookmarkDataIsStale: &isStale)
+
+                scope.url = url
+                scope.resolved = true
+
+                let allowed = url.startAccessingSecurityScopedResource()
+                print("Path - \(url) | write permissions - \(allowed)")
+
+                scope.allowed = allowed
+
+                // No idea what stale really is and what to do with it
+                if isStale {
+                    let newBookmark = try url.bookmarkData(options: [.minimalBookmark])
+                    scope.pathBookmark = newBookmark
+                }
+            } catch {
+                scope.allowed = false
+                scope.resolved = false
+                print(error)
+            }
+
+            // If storage is not allowed and it used as default, reset default
+            if !scope.allowed, preferences.defaultStorage == scope.uuid {
+                preferences.defaultStorage = nil
             }
         }
     }

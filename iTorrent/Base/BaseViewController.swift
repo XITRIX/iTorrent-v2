@@ -84,6 +84,8 @@ class BaseHostingViewController<View: MvvmSwiftUIViewProtocol>: SAHostingViewCon
             titleLabel.sizeToFit()
         }
         #endif
+
+        title = rootView.title
     }
 
     override func viewWillAppear(_ animated: Bool) {

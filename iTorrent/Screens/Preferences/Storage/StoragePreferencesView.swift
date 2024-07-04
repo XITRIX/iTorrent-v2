@@ -1,5 +1,5 @@
 //
-//  SUIStoragePreferencesViewController.swift
+//  StoragePreferencesView.swift
 //  iTorrent
 //
 //  Created by Даниил Виноградов on 03.07.2024.
@@ -10,7 +10,7 @@ import SwiftUI
 import LibTorrent
 import UniformTypeIdentifiers
 
-class SUIStoragePreferencesViewModel: BaseViewModel, ObservableObject {
+class StoragePreferencesViewModel: BaseViewModel, ObservableObject {
     @Published var allocateMemory: Bool = false
     @Published var customStoragesVM: [UUID: StorageModel] = [:]
     @Published var currentStorages: UUID?
@@ -30,9 +30,12 @@ class SUIStoragePreferencesViewModel: BaseViewModel, ObservableObject {
     @Injected var preferences: PreferencesStorage
 }
 
-struct SUIStoragePreferencesView<VM: SUIStoragePreferencesViewModel>: MvvmSwiftUIViewProtocol {
+struct StoragePreferencesView<VM: StoragePreferencesViewModel>: MvvmSwiftUIViewProtocol {
     @ObservedObject var viewModel: VM
     @State var filePickerPresented: Bool = false
+
+    let storagesLimit = 5
+    var title: String = %"preferences.storage"
 
     init(viewModel: VM) {
         self.viewModel = viewModel
@@ -60,16 +63,21 @@ struct SUIStoragePreferencesView<VM: SUIStoragePreferencesViewModel>: MvvmSwiftU
                 }
                 ForEach(Array(viewModel.customStoragesVM.values.sorted(by: { $0.name.localizedStandardCompare($1.name) == .orderedAscending }))) { scope in
                     Button {
-                        viewModel.preferences.defaultStorage = scope.uuid
+                        if scope.allowed {
+                            viewModel.preferences.defaultStorage = scope.uuid
+                        }
                     } label: {
                         HStack {
                             Text(scope.name)
-                                .foregroundStyle(Color.primary)
+                                .foregroundStyle(scope.allowed ? Color.primary : Color.secondary)
                             Spacer()
                             if viewModel.preferences.defaultStorage == scope.uuid {
                                 Image(systemName: "checkmark")
                                     .foregroundColor(.accentColor)
                                     .fontWeight(.medium)
+                            } else if !scope.allowed {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(.red)
                             }
                         }
                     }.swipeActions {
@@ -83,16 +91,16 @@ struct SUIStoragePreferencesView<VM: SUIStoragePreferencesViewModel>: MvvmSwiftU
                         }
                     }
                 }
-                if viewModel.customStoragesVM.count < 4 {
-                    Button(String("Add more...")) {
+                if viewModel.customStoragesVM.count < storagesLimit - 1 {
+                    Button("preferences.storage.add") {
                         filePickerPresented = true
                     }
                 }
             } header: {
                 HStack {
-                    Text(String("Storages"))
+                    Text("preferences.storage.storages")
                     Spacer()
-                    Text(String("Available: \(viewModel.customStoragesVM.count + 1)/5"))
+                    Text("preferences.storage.storages.available\(viewModel.customStoragesVM.count + 1)/\(storagesLimit)")
                 }
             }
         }.fileImporter(isPresented: $filePickerPresented, allowedContentTypes: [.folder]) { result in
@@ -101,17 +109,22 @@ struct SUIStoragePreferencesView<VM: SUIStoragePreferencesViewModel>: MvvmSwiftU
             let allowed = url.startAccessingSecurityScopedResource()
             print("Path - \(url) | write permissions - \(allowed)")
 
-            guard let bookmark = try? url.bookmarkData(options: [.minimalBookmark]),
-                  !viewModel.preferences.storageScopes.values.contains(where: {
-                      $0.resolvedURL == url || $0.resolvedURL == TorrentService.downloadPath
-                  })
+            guard let bookmark = try? url.bookmarkData(options: [.minimalBookmark])
             else { return }
 
-            print(url)
+            if let storage = viewModel.preferences.storageScopes.values.first(where: {
+                      $0.url == url || $0.url == TorrentService.downloadPath
+            }) {
+                storage.pathBookmark = bookmark
+                return
+            }
 
             let storage = StorageModel()
             storage.uuid = UUID()
             storage.name = url.lastPathComponent
+            storage.url = url
+            storage.allowed = allowed
+            storage.resolved = true
 
             do {
                 let name = try url.resourceValues(forKeys: [.localizedNameKey])
@@ -121,7 +134,6 @@ struct SUIStoragePreferencesView<VM: SUIStoragePreferencesViewModel>: MvvmSwiftU
             } catch { }
 
             storage.pathBookmark = bookmark
-            storage.resolvedURL = url
 
             withAnimation {
                 viewModel.preferences.storageScopes[storage.uuid] = storage
