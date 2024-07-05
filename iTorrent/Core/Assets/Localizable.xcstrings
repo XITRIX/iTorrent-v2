@@ -107,13 +107,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Download path"
+            "value" : "Select storage"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Путь скачивания"
+            "value" : "Выберите хранилище"
           }
         }
       }
@@ -691,6 +691,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Текущее"
+          }
+        }
+      }
+    },
+    "details.path.migrate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Migrate storage"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мигрировать хранилище"
           }
         }
       }
@@ -3039,6 +3055,22 @@
         }
       }
     },
+    "preferences.storage.add.error.notDirectory" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected path is not a directory"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выбранный путь не является директорией"
+          }
+        }
+      }
+    },
     "preferences.storage.allocate" : {
       "localizations" : {
         "en" : {
@@ -3867,6 +3899,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Раздача"
+          }
+        }
+      }
+    },
+    "torrent.state.storageError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage error"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ошибка хранилища"
           }
         }
       }

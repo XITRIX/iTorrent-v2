@@ -15,7 +15,8 @@ class TorrentAddViewController<VM: TorrentAddViewModel>: BaseViewController<VM> 
     private let cancelButton = UIBarButtonItem(systemItem: .close)
     private let downloadButton = UIModernBarButtonItem(image: .init(systemName: "arrow.down"))
     private let diskLabel = makeDiskLabel()
-    private let moreButton = UIBarButtonItem(title: "More", image: .init(systemName: "ellipsis.circle"))
+    private let priorityButton = UIBarButtonItem(title: %"prioriry.change.title", image: .init(resource: .icSort))
+    private let storageButton = UIBarButtonItem(title: %"addTorrent.storage.selected", image: .init(systemName: "externaldrive"))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +45,9 @@ class TorrentAddViewController<VM: TorrentAddViewModel>: BaseViewController<VM> 
         toolbarItems = [
             .init(customView: diskLabel),
             .init(systemItem: .flexibleSpace),
-            moreButton
+            storageButton,
+            .fixedSpace(16),
+            priorityButton
         ]
 
         disposeBag.bind {
@@ -76,19 +79,18 @@ private extension TorrentAddViewController {
     }
 
     func updateMenu() {
-        moreButton.menu = UIMenu(children: [
-            UIMenu.makeForChangePriority { [unowned self] priority in
-                viewModel.setAllFilesPriority(priority)
-            },
-            UIMenu(title: %"addTorrent.storage.selected",
-                   image: .init(systemName: "externaldrive"),
-                   children: viewModel.storages.map { storage in
-                       UIAction(title: storage.name, state: storage.selected ? .on : .off) { [unowned self] _ in
-                           viewModel.downloadStorage.value = storage.uuid
-                           updateMenu()
-                       }
-                   })
-        ])
+        priorityButton.menu = UIMenu.makeForChangePriority { [unowned self] priority in
+            viewModel.setAllFilesPriority(priority)
+        }
+
+        storageButton.menu = UIMenu(title: %"addTorrent.storage.selected",
+                                    image: .init(systemName: "externaldrive"),
+                                    children: viewModel.storages.map { storage in
+            UIAction(title: storage.name, state: storage.selected ? .on : .off) { [unowned self] _ in
+                viewModel.downloadStorage.value = storage.uuid
+                updateMenu()
+            }
+        })
     }
 }
 

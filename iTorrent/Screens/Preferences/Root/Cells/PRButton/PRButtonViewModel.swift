@@ -15,6 +15,7 @@ extension PRButtonViewModel {
         var removeAction: (() -> Void)? = nil
         var title: String
         var tintedTitle: Bool = false
+        var isBold: Bool = false
         var value: AnyPublisher<String, Never>?
         var canReorder: Bool = false
         var tinted: Bool = true
@@ -30,6 +31,7 @@ class PRButtonViewModel: BaseViewModelWith<PRButtonViewModel.Config>, Observable
     var id: String?
     @Published var title = ""
     @Published var tintedTitle: Bool = false
+    @Published var isBold: Bool = false
     @Published var value: String = ""
     @Published var tinted: Bool = true
     @Published var singleLine: Bool = false
@@ -43,6 +45,7 @@ class PRButtonViewModel: BaseViewModelWith<PRButtonViewModel.Config>, Observable
         id = model.id
         title = model.title
         tintedTitle = model.tintedTitle
+        isBold = model.isBold
         if let value = model.value {
             value.assign(to: &self.$value)
         }
@@ -56,12 +59,16 @@ class PRButtonViewModel: BaseViewModelWith<PRButtonViewModel.Config>, Observable
 
     override func isEqual(to other: MvvmViewModel) -> Bool {
         guard let other = other as? Self else { return false }
-        return id == other.id && title == other.title && accessories.count == other.accessories.count
+        return id == other.id && 
+            title == other.title &&
+            isBold == other.isBold &&
+            accessories.count == other.accessories.count
     }
 
     override func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(title)
+        hasher.combine(isBold)
         hasher.combine(accessories.count)
     }
 }

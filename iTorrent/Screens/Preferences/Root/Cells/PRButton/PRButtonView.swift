@@ -14,6 +14,7 @@ struct PRButtonView: MvvmSwiftUICellProtocol {
     var body: some View {
         HStack {
             Text(viewModel.title)
+                .fontWeight(viewModel.isBold ? .semibold : .regular)
                 .foregroundStyle(viewModel.tintedTitle ? Color.accentColor : Color.primary)
             Spacer()
             Text(viewModel.value)

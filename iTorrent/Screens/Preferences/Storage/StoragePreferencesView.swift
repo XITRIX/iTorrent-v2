@@ -13,14 +13,14 @@ import UniformTypeIdentifiers
 class StoragePreferencesViewModel: BaseViewModel, ObservableObject {
     @Published var allocateMemory: Bool = false
     @Published var customStoragesVM: [UUID: StorageModel] = [:]
-    @Published var currentStorages: UUID?
+    @Published var currentStorage: UUID?
 
     required init() {
         super.init()
         allocateMemory = preferences.allocateMemory
         preferences.$storageScopes.assign(to: &$customStoragesVM)
 
-        preferences.$defaultStorage.assign(to: &$currentStorages)
+        preferences.$defaultStorage.assign(to: &$currentStorage)
 
         disposeBag.bind {
             $allocateMemory.sink { [unowned self] in preferences.allocateMemory = $0 }
@@ -51,7 +51,7 @@ struct StoragePreferencesView<VM: StoragePreferencesViewModel>: MvvmSwiftUIViewP
                     viewModel.preferences.defaultStorage = nil
                 } label: {
                     HStack {
-                        Text(String("iTorrent Default"))
+                        Text(StorageModel.defaultName)
                             .foregroundStyle(Color.primary)
                         Spacer()
                         if viewModel.preferences.defaultStorage == nil {
@@ -105,6 +105,12 @@ struct StoragePreferencesView<VM: StoragePreferencesViewModel>: MvvmSwiftUIViewP
             }
         }.fileImporter(isPresented: $filePickerPresented, allowedContentTypes: [.folder]) { result in
             guard let url = try? result.get() else { return }
+
+            guard url.isDirectory else {
+                return viewModel.alert(title: %"common.error", message: %"preferences.storage.add.error.notDirectory", actions: [
+                    .init(title: %"common.close", style: .cancel)
+                ])
+            }
 
             let allowed = url.startAccessingSecurityScopedResource()
             print("Path - \(url) | write permissions - \(allowed)")

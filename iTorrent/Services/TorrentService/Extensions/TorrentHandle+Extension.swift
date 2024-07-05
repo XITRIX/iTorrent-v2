@@ -66,6 +66,10 @@ extension TorrentHandle {
 
 extension TorrentHandle.Snapshot {
     var friendlyState: TorrentHandle.State {
+        if storage?.allowed == false {
+            return .storageError
+        }
+
         switch state {
         case .downloading:
             if isPaused { return .paused }
@@ -79,6 +83,14 @@ extension TorrentHandle.Snapshot {
         default:
             return state
         }
+    }
+
+    var canResume: Bool {
+        isPaused && friendlyState != .storageError
+    }
+
+    var canPause: Bool {
+        !isPaused
     }
 }
 
@@ -99,10 +111,19 @@ extension TorrentHandle.State {
             return String(localized: "torrent.state.resuming")
         case .paused:
             return String(localized: "torrent.state.paused")
+        case .storageError:
+            return String(localized: "torrent.state.storageError")
         @unknown default:
             assertionFailure("Unregistered \(Self.self) enum value is not allowed: \(self)")
             return ""
         }
+    }
+}
+
+// MARK: - Storage
+extension TorrentHandle.Snapshot {
+    var storage: StorageModel? {
+        TorrentService.shared.storages.first(where: { $0.value.url.normalized == downloadPath.normalized })?.value
     }
 }
 

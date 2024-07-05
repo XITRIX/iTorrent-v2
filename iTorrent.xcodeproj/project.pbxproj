@@ -206,6 +206,8 @@
 		D1EFCD172AF6AE1600D33A7A /* TorrentFilesDictionaryItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EFCD162AF6AE1600D33A7A /* TorrentFilesDictionaryItemView.swift */; };
 		D1EFCD192AF6AEC700D33A7A /* TorrentFilesDictionaryItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EFCD182AF6AEC700D33A7A /* TorrentFilesDictionaryItemViewModel.swift */; };
 		D1F8BC852AFC405A00A6258C /* MvvmViewModel+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F8BC842AFC405A00A6258C /* MvvmViewModel+Alert.swift */; };
+		D1FFC9652C38136600233C2F /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FFC9642C38135F00233C2F /* URL+Extensions.swift */; };
+		D1FFC96C2C382FC900233C2F /* StorageModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FFC96B2C382FBE00233C2F /* StorageModel+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -439,6 +441,8 @@
 		D1EFCD162AF6AE1600D33A7A /* TorrentFilesDictionaryItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorrentFilesDictionaryItemView.swift; sourceTree = "<group>"; };
 		D1EFCD182AF6AEC700D33A7A /* TorrentFilesDictionaryItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorrentFilesDictionaryItemViewModel.swift; sourceTree = "<group>"; };
 		D1F8BC842AFC405A00A6258C /* MvvmViewModel+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MvvmViewModel+Alert.swift"; sourceTree = "<group>"; };
+		D1FFC9642C38135F00233C2F /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
+		D1FFC96B2C382FBE00233C2F /* StorageModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StorageModel+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -797,8 +801,8 @@
 		D11333B32AF19C3400FA017E /* TorrentService */ = {
 			isa = PBXGroup;
 			children = (
+				D1FFC9632C37F44800233C2F /* Extensions */,
 				D1A226F12AEF019400669D6D /* TorrentService.swift */,
-				D11333B42AF19C4900FA017E /* TorrentHandle+Extension.swift */,
 			);
 			path = TorrentService;
 			sourceTree = "<group>";
@@ -1017,6 +1021,7 @@
 				D1048D872BBEA23C0027EF2F /* Combine */,
 				D1352D282BBD418200104E7B /* UIViewController */,
 				D1D1279A2BC7CA7600C04533 /* SwiftUILayoutGuides.swift */,
+				D1FFC9642C38135F00233C2F /* URL+Extensions.swift */,
 				D19E00252AF045F9000A17A2 /* SpeedFormat.swift */,
 				D1ACFDC82AF6ED200098FF56 /* UIImage+File.swift */,
 				D1AA00D12AFAC95500B74629 /* String+Localized.swift */,
@@ -1316,6 +1321,15 @@
 			path = TorrentFilesDictionaryItem;
 			sourceTree = "<group>";
 		};
+		D1FFC9632C37F44800233C2F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D11333B42AF19C4900FA017E /* TorrentHandle+Extension.swift */,
+				D1FFC96B2C382FBE00233C2F /* StorageModel+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1508,6 +1522,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7CF6DA352C0F3DB90033D03F /* BCHostingConfiguration.swift in Sources */,
+				D1FFC96C2C382FC900233C2F /* StorageModel+Extensions.swift in Sources */,
 				D1F8BC852AFC405A00A6258C /* MvvmViewModel+Alert.swift in Sources */,
 				D17871FF2AF2C0A700F11F9F /* UIKitSwiftUIInarop.swift in Sources */,
 				D135C59C2AEFB96F00440680 /* TorrentDetailsViewModel.swift in Sources */,
@@ -1598,6 +1613,7 @@
 				D135C5992AEFB96100440680 /* TorrentDetailsViewController.swift in Sources */,
 				D1048D8B2BBEB6DE0027EF2F /* CombineLatest.swift in Sources */,
 				D11138572AF976CE008907F7 /* TorrentAddDirectoryItemViewModel.swift in Sources */,
+				D1FFC9652C38136600233C2F /* URL+Extensions.swift in Sources */,
 				7C1C08AB2C31F31900569B45 /* PauseTorrentIntent.swift in Sources */,
 				D1CAB8872AF3B52E00EB6AFF /* ToggleCellViewModel.swift in Sources */,
 				D11BE5492AFBA03D00780C1B /* PRButtonView.swift in Sources */,

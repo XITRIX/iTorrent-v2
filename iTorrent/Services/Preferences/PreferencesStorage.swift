@@ -21,6 +21,11 @@ class PreferencesStorage: Resolvable {
 
         // Sanity check for defaultStorage if something went wrong
         if defaultStorage != nil, !storageScopes.contains(where: { $0.key == defaultStorage }) { defaultStorage = nil }
+
+        // Fix sorting array in case new status appeared
+        if torrentListGroupsSortingArray.count != Self.defaultTorrentListGroupsSortingArray.count {
+            torrentListGroupsSortingArray = Self.defaultTorrentListGroupsSortingArray
+        }
     }
 
     private var disposeBag: [AnyCancellable] = []
@@ -30,10 +35,11 @@ class PreferencesStorage: Resolvable {
         .checkingFiles,
         .downloadingMetadata,
         .downloading,
-        .finished,
         .seeding,
+        .finished,
         .checkingResumeData,
-        .paused
+        .paused,
+        .storageError
     ]
 
     @UserDefaultItem("torrentDefaultStorage", nil) var defaultStorage: UUID?
