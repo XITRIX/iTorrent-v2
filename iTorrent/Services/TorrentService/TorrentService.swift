@@ -18,7 +18,7 @@ extension TorrentService {
 }
 
 class TorrentService {
-    @Published var torrents: [TorrentHandle] = []
+    @Published var torrents: [TorrentHashes: TorrentHandle] = [:]
     var updateNotifier = PassthroughSubject<TorrentUpdateModel, Never>()
 
     static let shared = TorrentService()
@@ -50,12 +50,12 @@ extension TorrentService {
     }
 
     func checkTorrentExists(with hash: TorrentHashes) -> Bool {
-        torrents.contains(where: { $0.snapshot.infoHashes == hash })
+        session.torrentsMap[hash] != nil
     }
 
     @discardableResult
     func addTorrent(by file: Downloadable, at storage: UUID? = nil) -> Bool {
-        guard !torrents.contains(where: { file.infoHashes == $0.snapshot.infoHashes })
+        guard session.torrentsMap[file.infoHashes] == nil
         else { return false }
 
         session.addTorrent(file, to: storage)
@@ -63,7 +63,7 @@ extension TorrentService {
     }
 
     func removeTorrent(by infoHashes: TorrentHashes, deleteFiles: Bool) {
-        guard let handle = torrents.first(where: { $0.snapshot.infoHashes == infoHashes })
+        guard let handle = session.torrentsMap[infoHashes]
         else { return }
 
         handle.deleteMetadata()
@@ -77,7 +77,7 @@ extension TorrentService {
     func refreshStorage(_ storage: StorageModel) -> Bool {
         guard storage.resolveSequrityScopes() else { return false }
 
-        let handles = torrents.filter { $0.snapshot.downloadPath.normalized == storage.url.normalized }
+        let handles = torrents.values.filter { $0.snapshot.storageUUID == storage.uuid }
         handles.forEach { $0.reload() }
         return true
     }
@@ -86,30 +86,20 @@ extension TorrentService {
 // MARK: - SessionDelegate
 extension TorrentService: SessionDelegate {
     func torrentManager(_ manager: Session, didAddTorrent torrent: TorrentHandle) {
-        // Do not use snapshot for 'torrent' because it is not generated yet
-        guard torrents.firstIndex(where: { $0.snapshot.infoHashes == torrent.infoHashes }) == nil
-        else { return }
-
         torrent.prepareToAdd(into: self)
-        torrents.append(torrent)
+        torrents[torrent.snapshot.infoHashes] = torrent
     }
 
     func torrentManager(_ manager: Session, didRemoveTorrentWithHash hashesData: TorrentHashes) {
-        // Already on Main thread
-        guard let index = torrents.firstIndex(where: { $0.snapshot.infoHashes == hashesData })
+        guard let torrent = torrents[hashesData]
         else { return }
 
-        let torrent = torrents[index]
         torrent.removePublisher.send(torrent)
-        torrents.remove(at: index)
+        torrents[hashesData] = nil
     }
 
     func torrentManager(_ manager: Session, didReceiveUpdateForTorrent torrent: TorrentHandle) {
-        // Do not use snapshot for 'torrent' because it could be not generated yet
-        guard let existingTorrent = torrents.first(where: { $0.snapshot.infoHashes == torrent.infoHashes })
-        else { return }
-
-        existingTorrent.__unthrottledUpdatePublisher.send()
+        torrent.__unthrottledUpdatePublisher.send()
     }
 
     func torrentManager(_ manager: Session, didErrorOccur error: Error) {}
@@ -122,7 +112,7 @@ private extension TorrentService {
 
         // Pause the core, so it will not deadlock app on making first snapshots
         session.pause();
-        torrents = session.torrents.map { torrent in
+        torrents = session.torrentsMap.mapValues { torrent in
             torrent.prepareToAdd(into: self)
             return torrent
         }

@@ -68,7 +68,7 @@ class TorrentListViewModel: BaseViewModel {
 
             Publishers.combineLatest(
                 torrentSectionChanged,
-                TorrentService.shared.$torrents,
+                TorrentService.shared.$torrents.map { Array($0.values) },
                 $searchQuery,
                 sortingType,
                 sortingReverced,
