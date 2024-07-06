@@ -66,7 +66,7 @@ extension TorrentHandle {
 
 extension TorrentHandle.Snapshot {
     var friendlyState: TorrentHandle.State {
-        if storage?.allowed == false {
+        if isStorageMissing {
             return .storageError
         }
 
@@ -123,7 +123,8 @@ extension TorrentHandle.State {
 // MARK: - Storage
 extension TorrentHandle.Snapshot {
     var storage: StorageModel? {
-        TorrentService.shared.storages.first(where: { $0.value.url.normalized == downloadPath.normalized })?.value
+        guard let storageUUID else { return nil }
+        return TorrentService.shared.storages[storageUUID]
     }
 }
 

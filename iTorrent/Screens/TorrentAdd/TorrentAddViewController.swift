@@ -82,15 +82,30 @@ private extension TorrentAddViewController {
         priorityButton.menu = UIMenu.makeForChangePriority { [unowned self] priority in
             viewModel.setAllFilesPriority(priority)
         }
-
-        storageButton.menu = UIMenu(title: %"addTorrent.storage.selected",
-                                    image: .init(systemName: "externaldrive"),
-                                    children: viewModel.storages.map { storage in
-            UIAction(title: storage.name, state: storage.selected ? .on : .off) { [unowned self] _ in
-                viewModel.downloadStorage.value = storage.uuid
-                updateMenu()
-            }
-        })
+        
+        storageButton.menu = UIMenu(
+            title: %"addTorrent.storage.selected",
+            image: .init(systemName: "externaldrive"),
+            children:
+                [
+                    UIAction(title: %"addTorrent.storage.manage") { [unowned self] _ in
+                        viewModel.navigate(to: StoragePreferencesViewModel.self, by: .present(wrapInNavigation: true))
+                    }
+                ] +
+            viewModel.storages.map { storage in
+                var attributes: UIMenuElement.Attributes = []
+                var image: UIImage?
+                
+                if !storage.allowed {
+                    attributes = .disabled
+                    image = .init(systemName: "exclamationmark.triangle.fill")?.withTintColor(.systemRed, renderingMode: .alwaysOriginal)
+                }
+                
+                return UIAction(title: storage.name, image: image, attributes: attributes, state: storage.selected ? .on : .off) { [unowned self] _ in
+                    viewModel.downloadStorage.value = storage.uuid
+                    updateMenu()
+                }
+            })
     }
 }
 

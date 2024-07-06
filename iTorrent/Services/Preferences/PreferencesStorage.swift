@@ -26,6 +26,9 @@ class PreferencesStorage: Resolvable {
         if torrentListGroupsSortingArray.count != Self.defaultTorrentListGroupsSortingArray.count {
             torrentListGroupsSortingArray = Self.defaultTorrentListGroupsSortingArray
         }
+
+        // TODO: REMOVE LATER!!!
+        isStorageRulesAccepted = false
     }
 
     private var disposeBag: [AnyCancellable] = []
@@ -43,6 +46,7 @@ class PreferencesStorage: Resolvable {
     ]
 
     @UserDefaultItem("torrentDefaultStorage", nil) var defaultStorage: UUID?
+    @UserDefaultItem("torrentIsStorageRulesAccepted", false) var isStorageRulesAccepted: Bool
     @UserDefaultItem("torrentStorageScopes", [:]) var storageScopes: [UUID: StorageModel]
 
     @UserDefaultItem("torrentListSortType", .alphabetically) var torrentListSortType: TorrentListViewModel.Sort

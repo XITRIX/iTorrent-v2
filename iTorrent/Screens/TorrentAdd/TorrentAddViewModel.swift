@@ -120,10 +120,10 @@ extension TorrentAddViewModel {
         }.eraseToAnyPublisher()
     }
 
-    var storages: [(name: String, selected: Bool, uuid: UUID?)] {
-        [(StorageModel.defaultName, downloadStorage.value == nil, nil)] +
+    var storages: [(name: String, selected: Bool, uuid: UUID?, allowed: Bool)] {
+        [(StorageModel.defaultName, downloadStorage.value == nil, nil, true)] +
         preferences.storageScopes.values.sorted(by: { $0.name.localizedStandardCompare($1.name) == .orderedAscending })
-            .map { ($0.name, downloadStorage.value == $0.uuid, $0.uuid ) }
+            .map { ($0.name, downloadStorage.value == $0.uuid, $0.uuid, $0.allowed ) }
     }
 }
 

@@ -5,20 +5,24 @@
 //  Created by Даниил Виноградов on 03.07.2024.
 //
 
+import LibTorrent
 import MvvmFoundation
 import SwiftUI
-import LibTorrent
 import UniformTypeIdentifiers
 
 class StoragePreferencesViewModel: BaseViewModel, ObservableObject {
     @Published var allocateMemory: Bool = false
     @Published var customStoragesVM: [UUID: StorageModel] = [:]
     @Published var currentStorage: UUID?
+    @Published var isStorageRulesAccepted: Bool = false
 
     required init() {
         super.init()
         allocateMemory = preferences.allocateMemory
         preferences.$storageScopes.assign(to: &$customStoragesVM)
+
+        isStorageRulesAccepted = preferences.isStorageRulesAccepted
+        preferences.$isStorageRulesAccepted.assign(to: &$isStorageRulesAccepted)
 
         preferences.$defaultStorage.assign(to: &$currentStorage)
 
@@ -46,6 +50,40 @@ struct StoragePreferencesView<VM: StoragePreferencesViewModel>: MvvmSwiftUIViewP
             Section {
                 Toggle("preferences.storage.allocate", isOn: $viewModel.allocateMemory)
             }
+
+            if !viewModel.isStorageRulesAccepted {
+                Section {
+                    VStack(spacing: 16) {
+                        VStack(spacing: 8) {
+                            Text("preferences.storage.warning.title")
+                                .fontWeight(.semibold)
+
+                            Text("preferences.storage.warning.message")
+                        }
+
+                        Button {
+                            withAnimation {
+                                viewModel.preferences.isStorageRulesAccepted = true
+                            }
+                        } label: {
+                            Spacer()
+                            Text("preferences.storage.warning.accept")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .buttonStyle(.bordered)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                        .accentColor(.red)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                }
+                .listRowBackground(Color.red.opacity(0.1))
+                .listRowSeparator(.hidden)
+            }
+
             Section {
                 Button {
                     viewModel.preferences.defaultStorage = nil
@@ -94,7 +132,7 @@ struct StoragePreferencesView<VM: StoragePreferencesViewModel>: MvvmSwiftUIViewP
                 if viewModel.customStoragesVM.count < storagesLimit - 1 {
                     Button("preferences.storage.add") {
                         filePickerPresented = true
-                    }
+                    }.disabled(!viewModel.isStorageRulesAccepted)
                 }
             } header: {
                 HStack {
@@ -119,7 +157,7 @@ struct StoragePreferencesView<VM: StoragePreferencesViewModel>: MvvmSwiftUIViewP
             else { return }
 
             if let storage = viewModel.preferences.storageScopes.values.first(where: {
-                      $0.url == url || $0.url == TorrentService.downloadPath
+                $0.url == url || $0.url == TorrentService.downloadPath
             }) {
                 storage.pathBookmark = bookmark
                 return
@@ -137,7 +175,7 @@ struct StoragePreferencesView<VM: StoragePreferencesViewModel>: MvvmSwiftUIViewP
                 if let name = name.allValues[.localizedNameKey] as? String {
                     storage.name = name
                 }
-            } catch { }
+            } catch {}
 
             storage.pathBookmark = bookmark
 

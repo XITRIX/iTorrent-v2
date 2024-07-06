@@ -8,11 +8,11 @@
 import Foundation
 
 extension URL {
-    var normalized: Self {
+    var normalized: String {
         if path().hasSuffix("/") {
-            return URL(fileURLWithPath: String(path().dropLast()))
+            return String(path().dropLast())
         }
-        return self
+        return path()
     }
 }
 

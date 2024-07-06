@@ -73,6 +73,14 @@ extension TorrentService {
     func updateSettings(_ settings: Session.Settings) {
         session.settings = settings
     }
+
+    func refreshStorage(_ storage: StorageModel) -> Bool {
+        guard storage.resolveSequrityScopes() else { return false }
+
+        let handles = torrents.filter { $0.snapshot.downloadPath.normalized == storage.url.normalized }
+        handles.forEach { $0.reload() }
+        return true
+    }
 }
 
 // MARK: - SessionDelegate
@@ -143,28 +151,7 @@ private extension TorrentService {
 
     func resolveStorageScopes() {
         preferences.storageScopes.values.forEach { scope in
-            do {
-                var isStale = false
-                let url = try URL(resolvingBookmarkData: scope.pathBookmark, bookmarkDataIsStale: &isStale)
-
-                scope.url = url
-                scope.resolved = true
-
-                let allowed = url.startAccessingSecurityScopedResource()
-                print("Path - \(url) | write permissions - \(allowed)")
-
-                scope.allowed = allowed
-
-                // No idea what stale really is and what to do with it
-                if isStale {
-                    let newBookmark = try url.bookmarkData(options: [.minimalBookmark])
-                    scope.pathBookmark = newBookmark
-                }
-            } catch {
-                scope.allowed = false
-                scope.resolved = false
-                print(error)
-            }
+            scope.resolveSequrityScopes()
 
             // If storage is not allowed and it used as default, reset default
             if !scope.allowed, preferences.defaultStorage == scope.uuid {
